@@ -16,6 +16,17 @@
       <div id="target-detail"></div>
     </div>
     <div id="speed-indicator">Velocidad: <span id="speed-value">0</span></div>
+    <div id="search-container">
+      <input
+        type="text"
+        id="planet-search"
+        list="planet-options"
+        placeholder="Buscar planeta…"
+        autocomplete="off"
+        title="Buscar planeta y viajar hasta él"
+      />
+      <datalist id="planet-options"></datalist>
+    </div>
     <button id="reset-view" title="Vista inicial">⌂</button>
     <button id="help-toggle" title="Ayuda">?</button>
     <div id="help-panel" class="hidden">

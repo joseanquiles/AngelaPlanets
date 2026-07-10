@@ -401,7 +401,7 @@ const keys = new Set();
 let moveSpeed = 5;
 const MIN_SPEED = 0.2;
 const MAX_SPEED = 400;
-let timeScale = 1;
+let timeScale = 0.3;
 let paused = false;
 let travelTarget = null; // { position: Vector3, lookAt: Vector3 } easing helper
 
@@ -411,11 +411,63 @@ const targetDetailEl = document.getElementById("target-detail");
 const helpPanel = document.getElementById("help-panel");
 const helpToggle = document.getElementById("help-toggle");
 const resetViewButton = document.getElementById("reset-view");
+const planetSearchInput = document.getElementById("planet-search");
+const planetOptionsList = document.getElementById("planet-options");
 
 helpToggle.addEventListener("click", () => helpPanel.classList.toggle("hidden"));
 resetViewButton.addEventListener("click", resetView);
 
+function normalizeName(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+[{ name: "Sol" }, ...PLANETS].forEach((data) => {
+  const option = document.createElement("option");
+  option.value = data.name;
+  planetOptionsList.appendChild(option);
+});
+
+function searchPlanet(query) {
+  const q = normalizeName(query);
+  if (!q) return false;
+
+  if (normalizeName("Sol").startsWith(q)) {
+    flyTo(sun, sunRadius * 8);
+    return true;
+  }
+  const body =
+    bodies.find((b) => normalizeName(b.name).startsWith(q)) ||
+    bodies.find((b) => normalizeName(b.name).includes(q));
+  if (body) {
+    flyTo(body.mesh, body.radius * 10 + 4);
+    return true;
+  }
+  return false;
+}
+
+function handleSearchSubmit() {
+  const found = searchPlanet(planetSearchInput.value);
+  planetSearchInput.classList.toggle("search-error", !found);
+  if (found) {
+    planetSearchInput.value = "";
+    planetSearchInput.blur();
+  }
+}
+
+planetSearchInput.addEventListener("keydown", (e) => {
+  e.stopPropagation();
+  if (e.key === "Enter") handleSearchSubmit();
+  if (e.key === "Escape") planetSearchInput.blur();
+});
+planetSearchInput.addEventListener("input", () => planetSearchInput.classList.remove("search-error"));
+planetSearchInput.addEventListener("change", handleSearchSubmit);
+
 window.addEventListener("keydown", (e) => {
+  if (document.activeElement === planetSearchInput) return;
   keys.add(e.code);
 
   if (e.code === "KeyP") paused = !paused;

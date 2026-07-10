@@ -107,6 +107,41 @@ html, body {
   background: rgba(30, 44, 70, 0.75);
 }
 
+#search-container {
+  position: absolute;
+  top: 20px;
+  right: 108px;
+  pointer-events: auto;
+}
+
+#planet-search {
+  width: 170px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 17px;
+  border: 1px solid rgba(120, 160, 255, 0.35);
+  background: rgba(10, 14, 22, 0.55);
+  color: #e8ecf1;
+  font-size: 13px;
+  font-family: inherit;
+  backdrop-filter: blur(6px);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+#planet-search::placeholder {
+  color: #8fa0c0;
+}
+
+#planet-search:focus {
+  border-color: rgba(150, 190, 255, 0.75);
+  background: rgba(20, 28, 44, 0.75);
+}
+
+#planet-search.search-error {
+  border-color: rgba(255, 110, 110, 0.85);
+}
+
 #help-panel {
   position: absolute;
   top: 66px;
