@@ -254,6 +254,61 @@ const FAMOUS_STARS = [
     azimuth: -110, elevation: -10, dist: 780,
     fact: "Junto a Próxima Centauri, forma el sistema estelar más cercano al Sol.",
   },
+  {
+    name: "Arturo", color: 0xffbb66, spectralType: "K1.5III", distanceLy: 36.7, temperatureK: 4286, radiusSuns: 25.4,
+    azimuth: 70, elevation: 50, dist: 1050,
+    fact: "La estrella más brillante del hemisferio celeste norte; una gigante naranja en la fase final de su vida.",
+  },
+  {
+    name: "Aldebarán", color: 0xff9966, spectralType: "K5III", distanceLy: 65.3, temperatureK: 3900, radiusSuns: 44.2,
+    azimuth: -20, elevation: 45, dist: 1150,
+    fact: "El 'ojo del Toro' en la constelación de Tauro: una gigante roja unas 44 veces más grande que el Sol.",
+  },
+  {
+    name: "Capella", color: 0xfff2b2, spectralType: "G3III", distanceLy: 42.9, temperatureK: 4970, radiusSuns: 11.98,
+    azimuth: 320, elevation: 60, dist: 1000,
+    fact: "En realidad un sistema de cuatro estrellas que a simple vista parece una sola; la más brillante de la constelación Auriga.",
+  },
+  {
+    name: "Altair", color: 0xd6e0ff, spectralType: "A7V", distanceLy: 16.7, temperatureK: 7550, radiusSuns: 1.63,
+    azimuth: 15, elevation: -40, dist: 820,
+    fact: "Gira tan rápido sobre sí misma que tiene forma de elipsoide achatado, no de esfera.",
+  },
+  {
+    name: "Deneb", color: 0xb8c8ff, spectralType: "A2Ia", distanceLy: 2615, temperatureK: 8525, radiusSuns: 203,
+    azimuth: 130, elevation: 55, dist: 1600,
+    fact: "Una de las estrellas intrínsecamente más luminosas conocidas; se ve brillante pese a estar a miles de años luz por su enorme tamaño.",
+  },
+  {
+    name: "Pólux", color: 0xffbf80, spectralType: "K0III", distanceLy: 33.8, temperatureK: 4666, radiusSuns: 9.06,
+    azimuth: -150, elevation: 20, dist: 980,
+    fact: "La estrella más brillante de Géminis y la gigante naranja más cercana a la Tierra; alberga un planeta gigante confirmado.",
+  },
+  {
+    name: "Spica", color: 0x9fb8ff, spectralType: "B1III-IV", distanceLy: 250, temperatureK: 22300, radiusSuns: 7.47,
+    azimuth: 190, elevation: -50, dist: 1350,
+    fact: "En realidad un sistema binario de dos estrellas azules muy calientes que orbitan tan cerca que casi se tocan.",
+  },
+  {
+    name: "Régulo", color: 0xaec2ff, spectralType: "B8IVn", distanceLy: 79.3, temperatureK: 12460, radiusSuns: 3.13,
+    azimuth: -30, elevation: -55, dist: 1180,
+    fact: "Gira tan deprisa que está achatada en los polos; su nombre significa 'pequeño rey' en latín.",
+  },
+  {
+    name: "Fomalhaut", color: 0xdde6ff, spectralType: "A3V", distanceLy: 25.1, temperatureK: 8590, radiusSuns: 1.84,
+    azimuth: 280, elevation: -25, dist: 900,
+    fact: "Rodeada por un anillo de polvo y escombros donde se ha fotografiado directamente un planeta.",
+  },
+  {
+    name: "Canopus", color: 0xfff4d9, spectralType: "A9II", distanceLy: 310, temperatureK: 7400, radiusSuns: 71,
+    azimuth: 60, elevation: -70, dist: 1500,
+    fact: "La segunda estrella más brillante del cielo nocturno, usada históricamente como referencia de navegación espacial.",
+  },
+  {
+    name: "Estrella de Barnard", color: 0xff8f66, spectralType: "M4V", distanceLy: 5.96, temperatureK: 3134, radiusSuns: 0.196,
+    azimuth: -80, elevation: 60, dist: 700,
+    fact: "El segundo sistema estelar más cercano al Sol; tiene el mayor movimiento propio conocido de cualquier estrella.",
+  },
 ];
 
 function scaleDistance(au) {
