@@ -770,7 +770,7 @@ document.addEventListener("mousemove", (e) => {
 });
 
 const keys = new Set();
-let moveSpeed = 5;
+let moveSpeed = 9;
 const MIN_SPEED = 0.2;
 const MAX_SPEED = 400;
 let timeScale = 0.3;
@@ -778,6 +778,22 @@ let paused = false;
 let travelTarget = null; // { position: Vector3, lookAt: Vector3 } easing helper
 
 const speedValueEl = document.getElementById("speed-value");
+const speedSlider = document.getElementById("speed-slider");
+
+// el slider usa una escala logarítmica (0-100) para poder cubrir
+// con precisión todo el rango de MIN_SPEED a MAX_SPEED
+function speedToSlider(speed) {
+  return (Math.log(speed / MIN_SPEED) / Math.log(MAX_SPEED / MIN_SPEED)) * 100;
+}
+function sliderToSpeed(value) {
+  return MIN_SPEED * Math.pow(MAX_SPEED / MIN_SPEED, value / 100);
+}
+function setMoveSpeed(newSpeed) {
+  moveSpeed = Math.max(MIN_SPEED, Math.min(MAX_SPEED, newSpeed));
+  speedSlider.value = speedToSlider(moveSpeed);
+}
+speedSlider.value = speedToSlider(moveSpeed);
+speedSlider.addEventListener("input", () => setMoveSpeed(sliderToSpeed(Number(speedSlider.value))));
 const targetNameEl = document.getElementById("target-name");
 const targetDetailEl = document.getElementById("target-detail");
 const helpPanel = document.getElementById("help-panel");
@@ -1079,8 +1095,8 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "KeyP") paused = !paused;
   if (e.code === "Equal" || e.code === "NumpadAdd") timeScale = Math.min(timeScale * 1.6, 400);
   if (e.code === "Minus" || e.code === "NumpadSubtract") timeScale = Math.max(timeScale / 1.6, 0.02);
-  if (e.code === "KeyQ") moveSpeed = Math.max(MIN_SPEED, moveSpeed / 1.2);
-  if (e.code === "KeyE") moveSpeed = Math.min(MAX_SPEED, moveSpeed * 1.2);
+  if (e.code === "KeyQ") setMoveSpeed(moveSpeed / 1.2);
+  if (e.code === "KeyE") setMoveSpeed(moveSpeed * 1.2);
 
   if (e.code === "Digit0") flyTo(sun, sunRadius * 8);
   if (e.code === "Home") resetView();
@@ -1101,7 +1117,7 @@ canvasEl.addEventListener(
   (e) => {
     e.preventDefault();
     const factor = e.deltaY > 0 ? 0.93 : 1.08;
-    moveSpeed = Math.max(MIN_SPEED, Math.min(MAX_SPEED, moveSpeed * factor));
+    setMoveSpeed(moveSpeed * factor);
   },
   { passive: false }
 );

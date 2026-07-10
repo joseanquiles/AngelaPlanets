@@ -15,7 +15,11 @@
       <div id="target-name">Sistema Solar</div>
       <div id="target-detail"></div>
     </div>
-    <div id="speed-indicator">Velocidad: <span id="speed-value">0</span></div>
+    <div id="speed-indicator">
+      <label for="speed-slider">Velocidad</label>
+      <input type="range" id="speed-slider" min="0" max="100" step="1" title="Ajustar velocidad de vuelo" />
+      <span id="speed-value">0</span>
+    </div>
     <div id="search-container">
       <input
         type="text"

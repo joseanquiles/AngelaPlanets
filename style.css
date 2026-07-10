@@ -229,6 +229,9 @@ html, body {
   position: absolute;
   bottom: 20px;
   left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px 14px;
   background: rgba(10, 14, 22, 0.55);
   border: 1px solid rgba(120, 160, 255, 0.25);
@@ -236,6 +239,23 @@ html, body {
   font-size: 13px;
   backdrop-filter: blur(6px);
   color: #cdd8ea;
+  pointer-events: auto;
+}
+
+#speed-indicator label {
+  white-space: nowrap;
+}
+
+#speed-slider {
+  width: 120px;
+  accent-color: #5b8def;
+  cursor: pointer;
+}
+
+#speed-value {
+  min-width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 #help-toggle,
