@@ -26,6 +26,12 @@ function scaleDistance(au) {
 function scaleRadius(km) {
   return Math.cbrt(km) * 0.045 + 0.35;
 }
+function formatOrbitYears(periodDays) {
+  const years = periodDays / 365.25;
+  if (Math.abs(years - 1) < 0.005) return "1 año terrestre";
+  const decimals = years < 10 ? 2 : 1;
+  return `${years.toFixed(decimals)} años terrestres`;
+}
 
 /* -------------------------------------------------------------------- */
 /*  Escena básica                                                       */
@@ -232,6 +238,7 @@ scene.add(new THREE.AmbientLight(0x223344, 0.35));
 /* -------------------------------------------------------------------- */
 /*  Planetas                                                            */
 /* -------------------------------------------------------------------- */
+const hud = document.getElementById("hud");
 const bodies = []; // { name, pivot, mesh, distance, angularSpeed, spinSpeed, radius }
 
 function buildOrbitLine(radius) {
@@ -271,7 +278,8 @@ PLANETS.forEach((data, index) => {
   mesh.userData.detail =
     `Distancia: ${data.distanceAU} UA\n` +
     `Radio: ${data.radiusKm.toLocaleString("es-ES")} km\n` +
-    `Órbita: ${data.periodDays.toLocaleString("es-ES")} días terrestres`;
+    `Órbita: ${data.periodDays.toLocaleString("es-ES")} días terrestres\n` +
+    `Vuelta al Sol: ${formatOrbitYears(data.periodDays)}`;
   pivot.add(mesh);
 
   if (data.rings) {
@@ -333,7 +341,6 @@ PLANETS.forEach((data, index) => {
 /* -------------------------------------------------------------------- */
 /*  Etiquetas HTML flotantes                                            */
 /* -------------------------------------------------------------------- */
-const hud = document.getElementById("hud");
 const labelObjects = [sun, ...bodies.map((b) => b.mesh)].map((obj) => {
   const el = document.createElement("div");
   el.className = "planet-label";
