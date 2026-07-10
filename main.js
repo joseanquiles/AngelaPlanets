@@ -8,11 +8,12 @@ import * as THREE from "three";
 // radio: km reales comprimidos con raíz cúbica para que todos sean visibles
 const AU = 22; // unidades tres.js por raíz(UA)
 const EARTH_YEAR_SECONDS = 26; // segundos que tarda la Tierra en orbitar a timeScale=1
+const MOON_SLOWDOWN = 16; // ralentiza solo a las lunas, manteniendo su velocidad relativa real
 
 const PLANETS = [
   {
     key: "1", name: "Mercurio", color: 0x9c9591, distanceAU: 0.39, periodDays: 88, radiusKm: 2440, rotationHours: 1408, tilt: 0.03,
-    moons: 0, gravity: 0.38, orbitalSpeedKms: 47.4, avgTempC: 167, meanLongitudeJ2000: 252.25,
+    notableMoons: [], gravity: 0.38, orbitalSpeedKms: 47.4, avgTempC: 167, meanLongitudeJ2000: 252.25,
     fact: "El planeta más cercano al Sol y el más pequeño del sistema solar. Sufre las mayores variaciones de temperatura: hasta 600°C entre el día y la noche.",
     structure: [
       { name: "Núcleo de hierro", to: 0.85, color: 0xc9c2b4 },
@@ -22,7 +23,7 @@ const PLANETS = [
   },
   {
     key: "2", name: "Venus", color: 0xe0c185, distanceAU: 0.72, periodDays: 224.7, radiusKm: 6052, rotationHours: -5832, tilt: 3.1,
-    moons: 0, gravity: 0.91, orbitalSpeedKms: 35.0, avgTempC: 464, meanLongitudeJ2000: 181.98,
+    notableMoons: [], gravity: 0.91, orbitalSpeedKms: 35.0, avgTempC: 464, meanLongitudeJ2000: 181.98,
     fact: "El planeta más caliente del sistema solar por su densa atmósfera de CO2. Gira en sentido retrógrado y tan despacio que su día dura más que su año.",
     structure: [
       { name: "Núcleo metálico", to: 0.5, color: 0xdba15c },
@@ -31,8 +32,9 @@ const PLANETS = [
     ],
   },
   {
-    key: "3", name: "Tierra", color: 0x3a7bd5, distanceAU: 1.0, periodDays: 365.25, radiusKm: 6371, rotationHours: 24, tilt: 0.41, moon: true,
-    moons: 1, gravity: 1.0, orbitalSpeedKms: 29.8, avgTempC: 15, meanLongitudeJ2000: 100.46,
+    key: "3", name: "Tierra", color: 0x3a7bd5, distanceAU: 1.0, periodDays: 365.25, radiusKm: 6371, rotationHours: 24, tilt: 0.41,
+    notableMoons: [{ name: "Luna", sizeFactor: 0.27, orbitFactor: 2.0, periodDays: 27.3 }],
+    gravity: 1.0, orbitalSpeedKms: 29.8, avgTempC: 15, meanLongitudeJ2000: 100.46,
     fact: "El único planeta conocido con vida. El 71% de su superficie está cubierta de agua líquida.",
     structure: [
       { name: "Núcleo interno (sólido)", to: 0.19, color: 0xfff0c2 },
@@ -43,7 +45,11 @@ const PLANETS = [
   },
   {
     key: "4", name: "Marte", color: 0xc1440e, distanceAU: 1.52, periodDays: 687, radiusKm: 3390, rotationHours: 24.6, tilt: 0.44,
-    moons: 2, gravity: 0.38, orbitalSpeedKms: 24.1, avgTempC: -65, meanLongitudeJ2000: 355.45,
+    notableMoons: [
+      { name: "Fobos", sizeFactor: 0.14, orbitFactor: 1.8, periodDays: 0.32 },
+      { name: "Deimos", sizeFactor: 0.1, orbitFactor: 2.6, periodDays: 1.26 },
+    ],
+    gravity: 0.38, orbitalSpeedKms: 24.1, avgTempC: -65, meanLongitudeJ2000: 355.45,
     fact: "Conocido como el planeta rojo por el óxido de hierro de su superficie. Alberga el Monte Olimpo, el volcán más grande del sistema solar.",
     structure: [
       { name: "Núcleo de hierro y azufre", to: 0.53, color: 0xd8935c },
@@ -53,7 +59,13 @@ const PLANETS = [
   },
   {
     key: "5", name: "Júpiter", color: 0xd9b98a, distanceAU: 5.2, periodDays: 4331, radiusKm: 69911, rotationHours: 9.9, tilt: 0.05,
-    moons: 95, gravity: 2.53, orbitalSpeedKms: 13.1, avgTempC: -110, meanLongitudeJ2000: 34.4,
+    notableMoons: [
+      { name: "Ío", sizeFactor: 0.16, orbitFactor: 3.0, periodDays: 1.77 },
+      { name: "Europa", sizeFactor: 0.14, orbitFactor: 3.8, periodDays: 3.55 },
+      { name: "Ganímedes", sizeFactor: 0.22, orbitFactor: 4.8, periodDays: 7.15 },
+      { name: "Calisto", sizeFactor: 0.2, orbitFactor: 5.6, periodDays: 16.69 },
+    ],
+    gravity: 2.53, orbitalSpeedKms: 13.1, avgTempC: -110, meanLongitudeJ2000: 34.4,
     fact: "El planeta más grande del sistema solar. Su Gran Mancha Roja es una tormenta anticiclónica mayor que la Tierra.",
     structure: [
       { name: "Núcleo rocoso/metálico", to: 0.15, color: 0x7a5c3e },
@@ -64,7 +76,14 @@ const PLANETS = [
   },
   {
     key: "6", name: "Saturno", color: 0xe3c17f, distanceAU: 9.58, periodDays: 10747, radiusKm: 58232, rotationHours: 10.7, tilt: 0.47, rings: true,
-    moons: 146, gravity: 1.06, orbitalSpeedKms: 9.7, avgTempC: -140, meanLongitudeJ2000: 49.95,
+    notableMoons: [
+      { name: "Mimas", sizeFactor: 0.09, orbitFactor: 3.3, periodDays: 0.94 },
+      { name: "Encélado", sizeFactor: 0.1, orbitFactor: 3.7, periodDays: 1.37 },
+      { name: "Rea", sizeFactor: 0.15, orbitFactor: 4.3, periodDays: 4.5 },
+      { name: "Titán", sizeFactor: 0.24, orbitFactor: 5.0, periodDays: 15.95 },
+      { name: "Jápeto", sizeFactor: 0.13, orbitFactor: 6.0, periodDays: 79.3 },
+    ],
+    gravity: 1.06, orbitalSpeedKms: 9.7, avgTempC: -140, meanLongitudeJ2000: 49.95,
     fact: "Famoso por su espectacular sistema de anillos, compuestos principalmente de hielo y roca.",
     structure: [
       { name: "Núcleo rocoso/metálico", to: 0.15, color: 0x7a6248 },
@@ -75,7 +94,14 @@ const PLANETS = [
   },
   {
     key: "7", name: "Urano", color: 0x9fd6e0, distanceAU: 19.2, periodDays: 30589, radiusKm: 25362, rotationHours: -17.2, tilt: 1.71,
-    moons: 27, gravity: 0.89, orbitalSpeedKms: 6.8, avgTempC: -195, meanLongitudeJ2000: 313.24,
+    notableMoons: [
+      { name: "Miranda", sizeFactor: 0.1, orbitFactor: 3.0, periodDays: 1.41 },
+      { name: "Ariel", sizeFactor: 0.15, orbitFactor: 3.8, periodDays: 2.52 },
+      { name: "Umbriel", sizeFactor: 0.15, orbitFactor: 4.6, periodDays: 4.14 },
+      { name: "Titania", sizeFactor: 0.2, orbitFactor: 5.6, periodDays: 8.71 },
+      { name: "Oberón", sizeFactor: 0.19, orbitFactor: 6.6, periodDays: 13.46 },
+    ],
+    gravity: 0.89, orbitalSpeedKms: 6.8, avgTempC: -195, meanLongitudeJ2000: 313.24,
     fact: "Gira prácticamente 'tumbado de lado', con un eje de rotación casi paralelo a su órbita.",
     structure: [
       { name: "Núcleo rocoso", to: 0.2, color: 0x5c4a3e },
@@ -85,7 +111,8 @@ const PLANETS = [
   },
   {
     key: "8", name: "Neptuno", color: 0x4166f5, distanceAU: 30.05, periodDays: 59800, radiusKm: 24622, rotationHours: 16.1, tilt: 0.49,
-    moons: 14, gravity: 1.14, orbitalSpeedKms: 5.4, avgTempC: -200, meanLongitudeJ2000: 304.88,
+    notableMoons: [{ name: "Tritón", sizeFactor: 0.24, orbitFactor: 3.5, periodDays: 5.88, retrograde: true }],
+    gravity: 1.14, orbitalSpeedKms: 5.4, avgTempC: -200, meanLongitudeJ2000: 304.88,
     fact: "El planeta más lejano y ventoso: sus vientos pueden superar los 2000 km/h.",
     structure: [
       { name: "Núcleo rocoso", to: 0.2, color: 0x4a3c52 },
@@ -347,7 +374,7 @@ scene.add(new THREE.AmbientLight(0x223344, 0.35));
 /*  Planetas                                                            */
 /* -------------------------------------------------------------------- */
 const hud = document.getElementById("hud");
-const bodies = []; // { name, pivot, mesh, distance, angularSpeed, spinSpeed, radius }
+const bodies = []; // { name, pivot, mesh, distance, angularSpeed, spinSpeed, radius, moons }
 
 function buildOrbitLine(radius) {
   const points = [];
@@ -419,20 +446,29 @@ PLANETS.forEach((data, index) => {
     mesh.add(ring);
   }
 
-  let moon = null;
-  if (data.moon) {
+  const moons = data.notableMoons.map((moonData, moonIndex) => {
+    // se cuelga de `pivot` (traslación anual), no de `mesh` (rotación diaria),
+    // para que el giro axial del planeta no arrastre la órbita de la luna
     const moonPivot = new THREE.Object3D();
-    mesh.add(moonPivot);
+    moonPivot.position.copy(mesh.position);
+    moonPivot.rotation.y = Math.random() * Math.PI * 2; // fase inicial variada
+    pivot.add(moonPivot);
+    const moonRadius = radius * moonData.sizeFactor;
     const moonMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(radius * 0.27, 20, 20),
-      new THREE.MeshStandardMaterial({ map: surfaceTexture(0xb9b9b9, { spots: 40, seed: 99 }), roughness: 0.9 })
+      new THREE.SphereGeometry(moonRadius, 18, 18),
+      new THREE.MeshStandardMaterial({
+        map: surfaceTexture(0xb9b9b9, { spots: 35, seed: index * 31 + moonIndex * 7 + 11 }),
+        roughness: 0.9,
+      })
     );
-    moonMesh.position.set(radius * 3.2, 0, 0);
-    moonMesh.userData.name = "Luna";
-    moonMesh.userData.detail = "Satélite natural de la Tierra";
+    moonMesh.position.set(radius * moonData.orbitFactor, 0, 0);
+    moonMesh.userData.name = moonData.name;
+    moonMesh.userData.detail = `Satélite de ${data.name}`;
     moonPivot.add(moonMesh);
-    moon = { pivot: moonPivot, angularSpeed: (Math.PI * 2) / (27.3 / 365.25 * EARTH_YEAR_SECONDS) };
-  }
+    const moonPeriodSimSeconds = (moonData.periodDays / 365.25) * EARTH_YEAR_SECONDS * MOON_SLOWDOWN;
+    const moonAngularSpeed = ((Math.PI * 2) / moonPeriodSimSeconds) * (moonData.retrograde ? -1 : 1);
+    return { name: moonData.name, pivot: moonPivot, angularSpeed: moonAngularSpeed };
+  });
 
   const periodSimSeconds = (data.periodDays / 365.25) * EARTH_YEAR_SECONDS;
   const angularSpeed = (Math.PI * 2) / periodSimSeconds;
@@ -447,7 +483,7 @@ PLANETS.forEach((data, index) => {
     radius,
     angularSpeed,
     spinSpeed,
-    moon,
+    moons,
   });
 });
 
@@ -705,7 +741,7 @@ function showPlanetInfoPanel(body) {
       ["Inclinación axial", `${((data.tilt * 180) / Math.PI).toFixed(1)}°`],
       ["Gravedad superficial", `${data.gravity}× la Tierra`],
       ["Temperatura media", `${data.avgTempC > 0 ? "+" : ""}${data.avgTempC} °C`],
-      ["Lunas conocidas", `${data.moons}`],
+      ["Satélites más conocidos", data.notableMoons.length ? data.notableMoons.map((m) => m.name).join(", ") : "Ninguno"],
     ],
     fact: data.fact,
     structure: data.structure,
@@ -918,7 +954,9 @@ function animate() {
   for (const body of bodies) {
     body.pivot.rotation.y = body.angularSpeed * simTime;
     body.mesh.rotation.y = body.spinSpeed * simTime;
-    if (body.moon) body.moon.pivot.rotation.y = body.moon.angularSpeed * simTime;
+    for (const moon of body.moons) {
+      moon.pivot.rotation.y = moon.angularSpeed * simTime;
+    }
   }
   sun.rotation.y += dt * 0.02;
 
