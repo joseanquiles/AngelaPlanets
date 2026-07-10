@@ -396,3 +396,9 @@ html, body {
   background: rgba(10, 14, 22, 0.4);
   border-color: rgba(120, 160, 255, 0.1);
 }
+
+.star-label {
+  color: #ffe9b3;
+  background: rgba(30, 22, 8, 0.5);
+  border-color: rgba(255, 210, 130, 0.3);
+}

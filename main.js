@@ -211,6 +211,51 @@ const SUN_INFO = {
   ],
 };
 
+// Estrellas reales situadas más allá del sistema solar, con su color aproximado
+// según su temperatura/tipo espectral real. Posiciones fijas (no orbitan el Sol).
+const FAMOUS_STARS = [
+  {
+    name: "Sirio", color: 0xaec7ff, spectralType: "A1V", distanceLy: 8.6, temperatureK: 9940, radiusSuns: 1.71,
+    azimuth: 30, elevation: 10, dist: 950,
+    fact: "La estrella más brillante del cielo nocturno. Es casi el doble de grande y el doble de caliente que el Sol.",
+  },
+  {
+    name: "Betelgeuse", color: 0xff6a3d, spectralType: "M1-2Ia", distanceLy: 548, temperatureK: 3600, radiusSuns: 764,
+    azimuth: 110, elevation: 25, dist: 1400,
+    fact: "Una supergigante roja tan enorme que, si sustituyera al Sol, engulliría la órbita de Júpiter.",
+  },
+  {
+    name: "Rigel", color: 0x9bb0ff, spectralType: "B8Ia", distanceLy: 860, temperatureK: 12100, radiusSuns: 78.9,
+    azimuth: 160, elevation: -15, dist: 1300,
+    fact: "Una supergigante azul miles de veces más luminosa que el Sol, pese a estar a cientos de años luz.",
+  },
+  {
+    name: "Próxima Centauri", color: 0xff8a5c, spectralType: "M5.5Ve", distanceLy: 4.24, temperatureK: 3042, radiusSuns: 0.15,
+    azimuth: -60, elevation: -20, dist: 750,
+    fact: "La estrella más cercana al Sol. Alberga el exoplaneta Próxima b, dentro de su zona habitable.",
+  },
+  {
+    name: "Vega", color: 0xcdd9ff, spectralType: "A0V", distanceLy: 25, temperatureK: 9600, radiusSuns: 2.36,
+    azimuth: 200, elevation: 35, dist: 1000,
+    fact: "Una de las estrellas más estudiadas de la historia; durante mucho tiempo se usó como referencia de brillo cero.",
+  },
+  {
+    name: "Polar", color: 0xfff2d6, spectralType: "F7Ib", distanceLy: 433, temperatureK: 6015, radiusSuns: 37.5,
+    azimuth: 0, elevation: 80, dist: 1200,
+    fact: "La Estrella Polar, casi alineada con el eje de rotación terrestre: apenas se mueve en el cielo nocturno.",
+  },
+  {
+    name: "Antares", color: 0xff5a3c, spectralType: "M1.5Iab", distanceLy: 550, temperatureK: 3660, radiusSuns: 680,
+    azimuth: 250, elevation: -30, dist: 1450,
+    fact: "Su nombre significa 'rival de Marte' por su intenso color rojizo, similar al del planeta.",
+  },
+  {
+    name: "Alfa Centauri A", color: 0xfff2d0, spectralType: "G2V", distanceLy: 4.37, temperatureK: 5790, radiusSuns: 1.22,
+    azimuth: -110, elevation: -10, dist: 780,
+    fact: "Junto a Próxima Centauri, forma el sistema estelar más cercano al Sol.",
+  },
+];
+
 function scaleDistance(au) {
   return Math.sqrt(au) * AU + 6;
 }
@@ -447,6 +492,32 @@ sun.add(sunLight);
 scene.add(new THREE.AmbientLight(0x223344, 0.35));
 
 /* -------------------------------------------------------------------- */
+/*  Estrellas conocidas más allá del sistema solar                      */
+/* -------------------------------------------------------------------- */
+function starPosition(azimuthDeg, elevationDeg, dist) {
+  const az = (azimuthDeg * Math.PI) / 180;
+  const el = (elevationDeg * Math.PI) / 180;
+  return new THREE.Vector3(
+    dist * Math.cos(el) * Math.cos(az),
+    dist * Math.sin(el),
+    dist * Math.cos(el) * Math.sin(az)
+  );
+}
+
+const starRegistry = FAMOUS_STARS.map((data) => {
+  const visualRadius = Math.min(8, Math.max(1.2, Math.sqrt(data.radiusSuns) * 0.6));
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(visualRadius, 24, 24),
+    new THREE.MeshBasicMaterial({ color: data.color })
+  );
+  mesh.position.copy(starPosition(data.azimuth, data.elevation, data.dist));
+  mesh.userData.name = data.name;
+  mesh.add(glowSprite(data.color, visualRadius * 6));
+  scene.add(mesh);
+  return { ...data, mesh, visualRadius };
+});
+
+/* -------------------------------------------------------------------- */
 /*  Planetas                                                            */
 /* -------------------------------------------------------------------- */
 const hud = document.getElementById("hud");
@@ -586,6 +657,7 @@ const labelObjects = [
   { obj: sun, className: "planet-label" },
   ...bodies.map((b) => ({ obj: b.mesh, className: "planet-label" })),
   ...moonRegistry.map((m) => ({ obj: m.mesh, className: "planet-label moon-label" })),
+  ...starRegistry.map((s) => ({ obj: s.mesh, className: "planet-label star-label" })),
 ].map(({ obj, className }) => {
   const el = document.createElement("div");
   el.className = className;
@@ -670,7 +742,7 @@ function normalizeName(str) {
     .trim();
 }
 
-[{ name: "Sol" }, ...PLANETS, ...moonRegistry].forEach((data) => {
+[{ name: "Sol" }, ...PLANETS, ...moonRegistry, ...starRegistry].forEach((data) => {
   const option = document.createElement("option");
   option.value = data.name;
   planetOptionsList.appendChild(option);
@@ -881,6 +953,26 @@ function showMoonInfoPanel(moon) {
   });
 }
 
+function showStarInfoPanel(star) {
+  renderPlanetPanel({
+    name: star.name,
+    color: star.color,
+    stats: [
+      ["Tipo espectral", star.spectralType],
+      ["Distancia a la Tierra", `${star.distanceLy.toLocaleString("es-ES")} años luz`],
+      ["Temperatura superficial", `≈${star.temperatureK.toLocaleString("es-ES")} K`],
+      ["Radio", `${star.radiusSuns}× el Sol`],
+    ],
+    fact: star.fact,
+    structure: [
+      { name: "Núcleo", to: 0.4, color: 0xffffff },
+      { name: "Fotosfera", to: 1.0, color: star.color },
+    ],
+    focusObject: star.mesh,
+    focusOffset: star.visualRadius * 6 + 2,
+  });
+}
+
 planetPanelClose.addEventListener("click", () => planetPanel.classList.add("hidden"));
 planetPanelCenter.addEventListener("click", () => {
   if (panelFocusTarget) flyTo(panelFocusTarget.object3d, panelFocusTarget.offset);
@@ -897,7 +989,11 @@ function findBodyMatch(query) {
   const moon =
     moonRegistry.find((m) => normalizeName(m.name).startsWith(q)) ||
     moonRegistry.find((m) => normalizeName(m.name).includes(q));
-  return moon ? { type: "moon", moon } : null;
+  if (moon) return { type: "moon", moon };
+  const star =
+    starRegistry.find((s) => normalizeName(s.name).startsWith(q)) ||
+    starRegistry.find((s) => normalizeName(s.name).includes(q));
+  return star ? { type: "star", star } : null;
 }
 
 function handleSearchSubmit() {
@@ -906,7 +1002,8 @@ function handleSearchSubmit() {
   if (match) {
     if (match.type === "sun") showSunInfoPanel();
     else if (match.type === "planet") showPlanetInfoPanel(match.body);
-    else showMoonInfoPanel(match.moon);
+    else if (match.type === "moon") showMoonInfoPanel(match.moon);
+    else showStarInfoPanel(match.star);
     planetSearchInput.value = "";
     planetSearchInput.blur();
   }
