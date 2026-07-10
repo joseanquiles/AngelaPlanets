@@ -590,6 +590,125 @@ const starRegistry = FAMOUS_STARS.map((data) => {
 });
 
 /* -------------------------------------------------------------------- */
+/*  Cometas: cuerpos reales del sistema solar, situados de forma         */
+/*  ilustrativa cerca de algunas de las estrellas anteriores (orbitan   */
+/*  el Sol en la realidad; su periodo/datos reales se muestran en el    */
+/*  panel de información).                                              */
+/* -------------------------------------------------------------------- */
+const COMETS = [
+  {
+    name: "Halley", color: 0xdcefff, nucleusKm: 15, periodYears: 76,
+    discovered: "Documentado por Edmond Halley en 1705, quien predijo correctamente su regreso.",
+    composition: "Hielo de agua, polvo y compuestos orgánicos volátiles.",
+    fact: "El cometa periódico más famoso: es visible a simple vista cada 76 años. Su próximo paso cercano al Sol será en 2061.",
+    nearStarName: "Sirio", orbitRadius: 55, loopPeriodSeconds: 70, phase: 0.4, tilt: 0.5,
+  },
+  {
+    name: "Hale-Bopp", color: 0xe8f2ff, nucleusKm: 60, periodYears: 2533,
+    discovered: "Descubierto en 1995 por los astrónomos aficionados Alan Hale y Thomas Bopp.",
+    composition: "Hielo, polvo y una inusual abundancia de compuestos volátiles como monóxido de carbono.",
+    fact: "Uno de los cometas más brillantes del siglo XX, visible a simple vista durante 18 meses gracias a su núcleo inusualmente grande.",
+    nearStarName: "Arturo", orbitRadius: 60, loopPeriodSeconds: 85, phase: 2.1, tilt: -0.4,
+  },
+  {
+    name: "NEOWISE", color: 0xd8e8ff, nucleusKm: 5, periodYears: 6800,
+    discovered: "Descubierto en 2020 por el telescopio espacial NEOWISE de la NASA.",
+    composition: "Hielo, polvo y roca; desarrolló una llamativa cola de polvo y otra de iones.",
+    fact: "El cometa más brillante visible desde el hemisferio norte en más de dos décadas.",
+    nearStarName: "Capella", orbitRadius: 45, loopPeriodSeconds: 55, phase: 4.2, tilt: 0.3,
+  },
+  {
+    name: "Hyakutake", color: 0xeaf6ff, nucleusKm: 4.6, periodYears: 70000,
+    discovered: "Descubierto en 1996 por el astrónomo aficionado Yuji Hyakutake.",
+    composition: "Hielo de agua y polvo, con una intensa actividad de gas que generó su enorme cola.",
+    fact: "Pasó a solo 15 millones de km de la Tierra en 1996 y desplegó la cola más larga jamás registrada: más de 570 millones de km.",
+    nearStarName: "Deneb", orbitRadius: 65, loopPeriodSeconds: 95, phase: 1.3, tilt: 0.6,
+  },
+  {
+    name: "Encke", color: 0xd0e4ff, nucleusKm: 4.8, periodYears: 3.3,
+    discovered: "Su órbita fue calculada en 1819 por Johann Franz Encke.",
+    composition: "Hielo, polvo y roca; genera la lluvia de meteoros de las Táuridas al cruzar la órbita terrestre.",
+    fact: "Tiene el periodo orbital más corto conocido entre los cometas: completa una vuelta al Sol cada 3,3 años.",
+    nearStarName: "Aldebarán", orbitRadius: 40, loopPeriodSeconds: 45, phase: 5.0, tilt: -0.55,
+  },
+  {
+    name: "67P/Churyumov-Gerasimenko", color: 0xdde6ee, nucleusKm: 4, periodYears: 6.45,
+    discovered: "Descubierto en 1969 por Klim Churyumov y Svetlana Gerasimenko.",
+    composition: "Hielo de agua, polvo, roca y moléculas orgánicas complejas, analizadas in situ por la sonda Rosetta.",
+    fact: "Visitado por la sonda Rosetta de la ESA, que en 2014 posó el módulo Philae sobre su superficie: el primer aterrizaje suave en un cometa.",
+    nearStarName: "Fomalhaut", orbitRadius: 42, loopPeriodSeconds: 50, phase: 3.6, tilt: 0.2,
+  },
+];
+
+const COMET_TAIL_SEGMENTS = 22;
+
+const cometRegistry = COMETS.map((data) => {
+  const star = starRegistry.find((s) => s.name === data.nearStarName);
+  const center = star.mesh.position.clone();
+
+  const nucleusRadius = Math.max(0.4, Math.min(1.1, Math.cbrt(data.nucleusKm) * 0.28));
+  const nucleusMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(nucleusRadius, 14, 14),
+    new THREE.MeshBasicMaterial({ color: data.color })
+  );
+  nucleusMesh.userData.name = data.name;
+  nucleusMesh.add(glowSprite(data.color, nucleusRadius * 5));
+  scene.add(nucleusMesh);
+
+  // plano de paso (ligeramente inclinado) alrededor de la estrella asociada
+  const tiltEuler = new THREE.Euler(data.tilt, data.tilt * 0.7, 0);
+  const axisA = new THREE.Vector3(1, 0, 0).applyEuler(tiltEuler);
+  const axisB = new THREE.Vector3(0, 1, 0).applyEuler(tiltEuler);
+
+  const tailGeometry = new THREE.BufferGeometry();
+  tailGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(COMET_TAIL_SEGMENTS * 3), 3));
+  tailGeometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(COMET_TAIL_SEGMENTS * 3), 3));
+  const tailLine = new THREE.Line(
+    tailGeometry,
+    new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 })
+  );
+  scene.add(tailLine);
+
+  return {
+    ...data,
+    nucleusRadius,
+    center,
+    axisA,
+    axisB,
+    baseColor: new THREE.Color(data.color),
+    nucleusMesh,
+    tailLine,
+    history: new Array(COMET_TAIL_SEGMENTS).fill(null).map(() => center.clone()),
+  };
+});
+
+const cometPosVec = new THREE.Vector3();
+function updateComets(elapsedTime) {
+  for (const comet of cometRegistry) {
+    const angle = comet.phase + (elapsedTime / comet.loopPeriodSeconds) * Math.PI * 2;
+    cometPosVec
+      .copy(comet.center)
+      .addScaledVector(comet.axisA, Math.cos(angle) * comet.orbitRadius)
+      .addScaledVector(comet.axisB, Math.sin(angle) * comet.orbitRadius);
+    comet.nucleusMesh.position.copy(cometPosVec);
+
+    comet.history.pop();
+    comet.history.unshift(cometPosVec.clone());
+
+    const posAttr = comet.tailLine.geometry.attributes.position;
+    const colorAttr = comet.tailLine.geometry.attributes.color;
+    for (let i = 0; i < comet.history.length; i++) {
+      const p = comet.history[i];
+      posAttr.setXYZ(i, p.x, p.y, p.z);
+      const t = 1 - i / (comet.history.length - 1);
+      colorAttr.setXYZ(i, comet.baseColor.r * t, comet.baseColor.g * t, comet.baseColor.b * t);
+    }
+    posAttr.needsUpdate = true;
+    colorAttr.needsUpdate = true;
+  }
+}
+
+/* -------------------------------------------------------------------- */
 /*  Planetas                                                            */
 /* -------------------------------------------------------------------- */
 const hud = document.getElementById("hud");
@@ -730,6 +849,7 @@ const labelObjects = [
   ...bodies.map((b) => ({ obj: b.mesh, className: "planet-label" })),
   ...moonRegistry.map((m) => ({ obj: m.mesh, className: "planet-label moon-label" })),
   ...starRegistry.map((s) => ({ obj: s.mesh, className: "planet-label star-label" })),
+  ...cometRegistry.map((c) => ({ obj: c.nucleusMesh, className: "planet-label comet-label" })),
 ].map(({ obj, className }) => {
   const el = document.createElement("div");
   el.className = className;
@@ -830,7 +950,7 @@ function normalizeName(str) {
     .trim();
 }
 
-[{ name: "Sol" }, ...PLANETS, ...moonRegistry, ...starRegistry].forEach((data) => {
+[{ name: "Sol" }, ...PLANETS, ...moonRegistry, ...starRegistry, ...cometRegistry].forEach((data) => {
   const option = document.createElement("option");
   option.value = data.name;
   planetOptionsList.appendChild(option);
@@ -1061,6 +1181,27 @@ function showStarInfoPanel(star) {
   });
 }
 
+function showCometInfoPanel(comet) {
+  renderPlanetPanel({
+    name: comet.name,
+    color: comet.color,
+    stats: [
+      ["Se observa cerca de", comet.nearStarName],
+      ["Núcleo", `≈${comet.nucleusKm} km`],
+      ["Periodo orbital real (alrededor del Sol)", `${comet.periodYears.toLocaleString("es-ES")} años`],
+      ["Descubrimiento", comet.discovered],
+      ["Composición", comet.composition],
+    ],
+    fact: comet.fact,
+    structure: [
+      { name: "Núcleo rocoso", to: 0.6, color: 0x8a8478 },
+      { name: "Hielo y polvo", to: 1.0, color: comet.color },
+    ],
+    focusObject: comet.nucleusMesh,
+    focusOffset: comet.nucleusRadius * 8 + 2,
+  });
+}
+
 planetPanelClose.addEventListener("click", () => planetPanel.classList.add("hidden"));
 planetPanelCenter.addEventListener("click", () => {
   if (panelFocusTarget) flyTo(panelFocusTarget.object3d, panelFocusTarget.offset);
@@ -1081,7 +1222,11 @@ function findBodyMatch(query) {
   const star =
     starRegistry.find((s) => normalizeName(s.name).startsWith(q)) ||
     starRegistry.find((s) => normalizeName(s.name).includes(q));
-  return star ? { type: "star", star } : null;
+  if (star) return { type: "star", star };
+  const comet =
+    cometRegistry.find((c) => normalizeName(c.name).startsWith(q)) ||
+    cometRegistry.find((c) => normalizeName(c.name).includes(q));
+  return comet ? { type: "comet", comet } : null;
 }
 
 function handleSearchSubmit() {
@@ -1091,7 +1236,8 @@ function handleSearchSubmit() {
     if (match.type === "sun") showSunInfoPanel();
     else if (match.type === "planet") showPlanetInfoPanel(match.body);
     else if (match.type === "moon") showMoonInfoPanel(match.moon);
-    else showStarInfoPanel(match.star);
+    else if (match.type === "star") showStarInfoPanel(match.star);
+    else showCometInfoPanel(match.comet);
     planetSearchInput.value = "";
     planetSearchInput.blur();
   }
@@ -1248,12 +1394,14 @@ function updateProximityInfo() {
 /* -------------------------------------------------------------------- */
 const clock = new THREE.Clock();
 let simTime = 0;
+let cometTime = 0;
 
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.1);
 
   if (!paused) simTime += dt * timeScale;
+  if (!paused) cometTime += dt;
 
   for (const body of bodies) {
     body.pivot.rotation.y = body.angularSpeed * simTime;
@@ -1265,6 +1413,7 @@ function animate() {
   sun.rotation.y += dt * 0.02;
 
   updateMovement(dt);
+  updateComets(cometTime);
   updateLabels();
   updateProximityInfo();
   renderStructureView(dt);

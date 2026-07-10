@@ -422,3 +422,9 @@ html, body {
   background: rgba(30, 22, 8, 0.5);
   border-color: rgba(255, 210, 130, 0.3);
 }
+
+.comet-label {
+  color: #d8f0ff;
+  background: rgba(10, 22, 30, 0.5);
+  border-color: rgba(160, 220, 255, 0.35);
+}
