@@ -467,7 +467,7 @@ PLANETS.forEach((data, index) => {
     moonPivot.add(moonMesh);
     const moonPeriodSimSeconds = (moonData.periodDays / 365.25) * EARTH_YEAR_SECONDS * MOON_SLOWDOWN;
     const moonAngularSpeed = ((Math.PI * 2) / moonPeriodSimSeconds) * (moonData.retrograde ? -1 : 1);
-    return { name: moonData.name, pivot: moonPivot, angularSpeed: moonAngularSpeed };
+    return { name: moonData.name, pivot: moonPivot, mesh: moonMesh, angularSpeed: moonAngularSpeed };
   });
 
   const periodSimSeconds = (data.periodDays / 365.25) * EARTH_YEAR_SECONDS;
@@ -490,9 +490,14 @@ PLANETS.forEach((data, index) => {
 /* -------------------------------------------------------------------- */
 /*  Etiquetas HTML flotantes                                            */
 /* -------------------------------------------------------------------- */
-const labelObjects = [sun, ...bodies.map((b) => b.mesh)].map((obj) => {
+const moonMeshes = bodies.flatMap((b) => b.moons.map((m) => m.mesh));
+const labelObjects = [
+  { obj: sun, className: "planet-label" },
+  ...bodies.map((b) => ({ obj: b.mesh, className: "planet-label" })),
+  ...moonMeshes.map((mesh) => ({ obj: mesh, className: "planet-label moon-label" })),
+].map(({ obj, className }) => {
   const el = document.createElement("div");
-  el.className = "planet-label";
+  el.className = className;
   el.textContent = obj.userData.name;
   hud.appendChild(el);
   return { obj, el };

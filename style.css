@@ -388,3 +388,11 @@ html, body {
   pointer-events: none;
   border: 1px solid rgba(120, 160, 255, 0.15);
 }
+
+.moon-label {
+  font-size: 9px;
+  padding: 1px 5px;
+  color: #9db0cc;
+  background: rgba(10, 14, 22, 0.4);
+  border-color: rgba(120, 160, 255, 0.1);
+}
