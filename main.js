@@ -213,6 +213,47 @@ const PLANETS = [
       { name: "Corteza helada (nitrógeno y metano)", to: 1.0, color: 0xd8c3a0 },
     ],
   },
+  {
+    key: "CE", name: "Ceres", color: 0x9c9186, distanceAU: 2.77, distanceOverride: 41.2, periodDays: 1682, radiusKm: 473, rotationHours: 9.07, tilt: 0.07,
+    notableMoons: [],
+    gravity: 0.029, orbitalSpeedKms: 17.9, avgTempC: -105, meanLongitudeJ2000: 130,
+    fact: "Descubierto por Giuseppe Piazzi en 1801, fue el primer asteroide identificado. Hoy se clasifica como planeta enano: el mayor cuerpo del cinturón, con forma casi esférica.",
+    structure: [
+      { name: "Núcleo rocoso", to: 0.7, color: 0x7a6f63 },
+      { name: "Manto y corteza de hielo y sales", to: 1.0, color: 0xb5aa98 },
+    ],
+  },
+  {
+    key: "VE", name: "Vesta", color: 0xaa9c82, distanceAU: 2.36, distanceOverride: 39.8, periodDays: 1325, radiusKm: 263, rotationHours: 5.34, tilt: 0.51,
+    notableMoons: [],
+    gravity: 0.022, orbitalSpeedKms: 19.3, avgTempC: -60, meanLongitudeJ2000: 285,
+    fact: "El asteroide más brillante del cinturón, visible a veces a simple vista. Su hemisferio sur está dominado por un cráter de impacto gigantesco, el Rheasilvia.",
+    structure: [
+      { name: "Núcleo metálico", to: 0.4, color: 0x8a7a5c },
+      { name: "Manto rocoso", to: 0.85, color: 0x6e5c48 },
+      { name: "Corteza basáltica", to: 1.0, color: 0x9c8f78 },
+    ],
+  },
+  {
+    key: "PA", name: "Palas", color: 0x6b6258, distanceAU: 2.77, distanceOverride: 42.0, periodDays: 1686, radiusKm: 256, rotationHours: 7.81, tilt: 1.47,
+    notableMoons: [],
+    gravity: 0.018, orbitalSpeedKms: 17.7, avgTempC: -105, meanLongitudeJ2000: 173,
+    fact: "Tiene una órbita muy inclinada (34°) respecto al plano del resto del sistema solar, algo inusual entre los cuerpos grandes del cinturón.",
+    structure: [
+      { name: "Núcleo rocoso", to: 0.75, color: 0x5c544a },
+      { name: "Corteza", to: 1.0, color: 0x6b6258 },
+    ],
+  },
+  {
+    key: "HY", name: "Higía", color: 0x57524a, distanceAU: 3.14, distanceOverride: 42.8, periodDays: 2035, radiusKm: 217, rotationHours: 13.8, tilt: 0.05,
+    notableMoons: [],
+    gravity: 0.015, orbitalSpeedKms: 16.7, avgTempC: -110, meanLongitudeJ2000: 40,
+    fact: "El cuarto cuerpo más grande del cinturón de asteroides. Su forma casi esférica lo convierte en un firme candidato a ser reclasificado como planeta enano.",
+    structure: [
+      { name: "Núcleo rocoso", to: 0.75, color: 0x4a453e },
+      { name: "Corteza", to: 1.0, color: 0x57524a },
+    ],
+  },
 ];
 
 const SUN_INFO = {
@@ -727,7 +768,7 @@ function buildOrbitLine(radius) {
 }
 
 PLANETS.forEach((data, index) => {
-  const distance = scaleDistance(data.distanceAU);
+  const distance = data.distanceOverride ?? scaleDistance(data.distanceAU);
   const radius = scaleRadius(data.radiusKm);
   const color = data.colorOverride ?? data.color;
 
