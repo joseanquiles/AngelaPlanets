@@ -12,7 +12,7 @@ const EARTH_YEAR_SECONDS = 26; // segundos que tarda la Tierra en orbitar a time
 const PLANETS = [
   {
     key: "1", name: "Mercurio", color: 0x9c9591, distanceAU: 0.39, periodDays: 88, radiusKm: 2440, rotationHours: 1408, tilt: 0.03,
-    moons: 0,
+    moons: 0, gravity: 0.38, orbitalSpeedKms: 47.4, avgTempC: 167, meanLongitudeJ2000: 252.25,
     fact: "El planeta más cercano al Sol y el más pequeño del sistema solar. Sufre las mayores variaciones de temperatura: hasta 600°C entre el día y la noche.",
     structure: [
       { name: "Núcleo de hierro", to: 0.85, color: 0xc9c2b4 },
@@ -22,7 +22,7 @@ const PLANETS = [
   },
   {
     key: "2", name: "Venus", color: 0xe0c185, distanceAU: 0.72, periodDays: 224.7, radiusKm: 6052, rotationHours: -5832, tilt: 3.1,
-    moons: 0,
+    moons: 0, gravity: 0.91, orbitalSpeedKms: 35.0, avgTempC: 464, meanLongitudeJ2000: 181.98,
     fact: "El planeta más caliente del sistema solar por su densa atmósfera de CO2. Gira en sentido retrógrado y tan despacio que su día dura más que su año.",
     structure: [
       { name: "Núcleo metálico", to: 0.5, color: 0xdba15c },
@@ -32,7 +32,7 @@ const PLANETS = [
   },
   {
     key: "3", name: "Tierra", color: 0x3a7bd5, distanceAU: 1.0, periodDays: 365.25, radiusKm: 6371, rotationHours: 24, tilt: 0.41, moon: true,
-    moons: 1,
+    moons: 1, gravity: 1.0, orbitalSpeedKms: 29.8, avgTempC: 15, meanLongitudeJ2000: 100.46,
     fact: "El único planeta conocido con vida. El 71% de su superficie está cubierta de agua líquida.",
     structure: [
       { name: "Núcleo interno (sólido)", to: 0.19, color: 0xfff0c2 },
@@ -43,7 +43,7 @@ const PLANETS = [
   },
   {
     key: "4", name: "Marte", color: 0xc1440e, distanceAU: 1.52, periodDays: 687, radiusKm: 3390, rotationHours: 24.6, tilt: 0.44,
-    moons: 2,
+    moons: 2, gravity: 0.38, orbitalSpeedKms: 24.1, avgTempC: -65, meanLongitudeJ2000: 355.45,
     fact: "Conocido como el planeta rojo por el óxido de hierro de su superficie. Alberga el Monte Olimpo, el volcán más grande del sistema solar.",
     structure: [
       { name: "Núcleo de hierro y azufre", to: 0.53, color: 0xd8935c },
@@ -53,7 +53,7 @@ const PLANETS = [
   },
   {
     key: "5", name: "Júpiter", color: 0xd9b98a, distanceAU: 5.2, periodDays: 4331, radiusKm: 69911, rotationHours: 9.9, tilt: 0.05,
-    moons: 95,
+    moons: 95, gravity: 2.53, orbitalSpeedKms: 13.1, avgTempC: -110, meanLongitudeJ2000: 34.4,
     fact: "El planeta más grande del sistema solar. Su Gran Mancha Roja es una tormenta anticiclónica mayor que la Tierra.",
     structure: [
       { name: "Núcleo rocoso/metálico", to: 0.15, color: 0x7a5c3e },
@@ -64,7 +64,7 @@ const PLANETS = [
   },
   {
     key: "6", name: "Saturno", color: 0xe3c17f, distanceAU: 9.58, periodDays: 10747, radiusKm: 58232, rotationHours: 10.7, tilt: 0.47, rings: true,
-    moons: 146,
+    moons: 146, gravity: 1.06, orbitalSpeedKms: 9.7, avgTempC: -140, meanLongitudeJ2000: 49.95,
     fact: "Famoso por su espectacular sistema de anillos, compuestos principalmente de hielo y roca.",
     structure: [
       { name: "Núcleo rocoso/metálico", to: 0.15, color: 0x7a6248 },
@@ -75,7 +75,7 @@ const PLANETS = [
   },
   {
     key: "7", name: "Urano", color: 0x9fd6e0, distanceAU: 19.2, periodDays: 30589, radiusKm: 25362, rotationHours: -17.2, tilt: 1.71,
-    moons: 27,
+    moons: 27, gravity: 0.89, orbitalSpeedKms: 6.8, avgTempC: -195, meanLongitudeJ2000: 313.24,
     fact: "Gira prácticamente 'tumbado de lado', con un eje de rotación casi paralelo a su órbita.",
     structure: [
       { name: "Núcleo rocoso", to: 0.2, color: 0x5c4a3e },
@@ -85,7 +85,7 @@ const PLANETS = [
   },
   {
     key: "8", name: "Neptuno", color: 0x4166f5, distanceAU: 30.05, periodDays: 59800, radiusKm: 24622, rotationHours: 16.1, tilt: 0.49,
-    moons: 14,
+    moons: 14, gravity: 1.14, orbitalSpeedKms: 5.4, avgTempC: -200, meanLongitudeJ2000: 304.88,
     fact: "El planeta más lejano y ventoso: sus vientos pueden superar los 2000 km/h.",
     structure: [
       { name: "Núcleo rocoso", to: 0.2, color: 0x4a3c52 },
@@ -669,17 +669,35 @@ function formatRotation(rotationHours) {
   return `${abs.toFixed(1)} horas${retro}`;
 }
 
+const J2000_UTC_MS = Date.UTC(2000, 0, 1, 12, 0, 0);
+
+// Posición orbital aproximada: usa la longitud media real en J2000 y una
+// órbita circular (movimiento medio constante) para estimar en qué punto
+// de la vuelta al Sol está el planeta HOY, con la fecha real del sistema.
+function formatOrbitProgress(periodDays, meanLongitudeJ2000) {
+  const daysSinceJ2000 = (Date.now() - J2000_UTC_MS) / 86400000;
+  const longitudeToday = meanLongitudeJ2000 + (360 * daysSinceJ2000) / periodDays;
+  const normalized = ((longitudeToday % 360) + 360) % 360;
+  const dayOfOrbit = Math.floor((normalized / 360) * periodDays) + 1;
+  const daysRemaining = Math.max(0, Math.round(periodDays - (normalized / 360) * periodDays));
+  return `Día ${dayOfOrbit} de ${Math.round(periodDays)} — quedan ${daysRemaining} días para completar la vuelta`;
+}
+
 function showPlanetInfoPanel(body) {
   const data = PLANETS.find((p) => p.key === body.key);
   renderPlanetPanel({
     name: data.name,
     color: data.colorOverride ?? data.color,
     stats: [
+      ["Progreso orbital hoy", formatOrbitProgress(data.periodDays, data.meanLongitudeJ2000)],
       ["Distancia al Sol", `${data.distanceAU} UA (${Math.round(data.distanceAU * 149597870).toLocaleString("es-ES")} km)`],
       ["Radio", `${data.radiusKm.toLocaleString("es-ES")} km (${(data.radiusKm / 6371).toFixed(2)}× la Tierra)`],
       ["Periodo orbital", `${data.periodDays.toLocaleString("es-ES")} días (${formatOrbitYears(data.periodDays)})`],
+      ["Velocidad orbital media", `${data.orbitalSpeedKms} km/s`],
       ["Rotación", formatRotation(data.rotationHours)],
       ["Inclinación axial", `${((data.tilt * 180) / Math.PI).toFixed(1)}°`],
+      ["Gravedad superficial", `${data.gravity}× la Tierra`],
+      ["Temperatura media", `${data.avgTempC > 0 ? "+" : ""}${data.avgTempC} °C`],
       ["Lunas conocidas", `${data.moons}`],
     ],
     fact: data.fact,
