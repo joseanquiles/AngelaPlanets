@@ -10,15 +10,103 @@ const AU = 22; // unidades tres.js por raíz(UA)
 const EARTH_YEAR_SECONDS = 26; // segundos que tarda la Tierra en orbitar a timeScale=1
 
 const PLANETS = [
-  { key: "1", name: "Mercurio", color: 0x9c9591, distanceAU: 0.39, periodDays: 88, radiusKm: 2440, rotationHours: 1408, tilt: 0.03 },
-  { key: "2", name: "Venus", color: 0xe0c185, distanceAU: 0.72, periodDays: 224.7, radiusKm: 6052, rotationHours: -5832, tilt: 3.1 },
-  { key: "3", name: "Tierra", color: 0x3a7bd5, distanceAU: 1.0, periodDays: 365.25, radiusKm: 6371, rotationHours: 24, tilt: 0.41, moon: true },
-  { key: "4", name: "Marte", color: 0xc1440e, distanceAU: 1.52, periodDays: 687, radiusKm: 3390, rotationHours: 24.6, tilt: 0.44 },
-  { key: "5", name: "Júpiter", color: 0xd9b98a, distanceAU: 5.2, periodDays: 4331, radiusKm: 69911, rotationHours: 9.9, tilt: 0.05 },
-  { key: "6", name: "Saturno", color: 0xe3c17f, distanceAU: 9.58, periodDays: 10747, radiusKm: 58232, rotationHours: 10.7, tilt: 0.47, rings: true },
-  { key: "7", name: "Urano", color: 0x9fd6e0, distanceAU: 19.2, periodDays: 30589, radiusKm: 25362, rotationHours: -17.2, tilt: 1.71 },
-  { key: "8", name: "Neptuno", color: 0x4166f5, distanceAU: 30.05, periodDays: 59800, radiusKm: 24622, rotationHours: 16.1, tilt: 0.49 },
+  {
+    key: "1", name: "Mercurio", color: 0x9c9591, distanceAU: 0.39, periodDays: 88, radiusKm: 2440, rotationHours: 1408, tilt: 0.03,
+    moons: 0,
+    fact: "El planeta más cercano al Sol y el más pequeño del sistema solar. Sufre las mayores variaciones de temperatura: hasta 600°C entre el día y la noche.",
+    structure: [
+      { name: "Núcleo de hierro", to: 0.85, color: 0xc9c2b4 },
+      { name: "Manto de silicatos", to: 0.97, color: 0x8a6a52 },
+      { name: "Corteza", to: 1.0, color: 0x9c9591 },
+    ],
+  },
+  {
+    key: "2", name: "Venus", color: 0xe0c185, distanceAU: 0.72, periodDays: 224.7, radiusKm: 6052, rotationHours: -5832, tilt: 3.1,
+    moons: 0,
+    fact: "El planeta más caliente del sistema solar por su densa atmósfera de CO2. Gira en sentido retrógrado y tan despacio que su día dura más que su año.",
+    structure: [
+      { name: "Núcleo metálico", to: 0.5, color: 0xdba15c },
+      { name: "Manto rocoso", to: 0.97, color: 0xb97a3f },
+      { name: "Corteza", to: 1.0, color: 0xe0c185 },
+    ],
+  },
+  {
+    key: "3", name: "Tierra", color: 0x3a7bd5, distanceAU: 1.0, periodDays: 365.25, radiusKm: 6371, rotationHours: 24, tilt: 0.41, moon: true,
+    moons: 1,
+    fact: "El único planeta conocido con vida. El 71% de su superficie está cubierta de agua líquida.",
+    structure: [
+      { name: "Núcleo interno (sólido)", to: 0.19, color: 0xfff0c2 },
+      { name: "Núcleo externo (líquido)", to: 0.55, color: 0xffb066 },
+      { name: "Manto", to: 0.97, color: 0xb0523a },
+      { name: "Corteza", to: 1.0, color: 0x3a7bd5 },
+    ],
+  },
+  {
+    key: "4", name: "Marte", color: 0xc1440e, distanceAU: 1.52, periodDays: 687, radiusKm: 3390, rotationHours: 24.6, tilt: 0.44,
+    moons: 2,
+    fact: "Conocido como el planeta rojo por el óxido de hierro de su superficie. Alberga el Monte Olimpo, el volcán más grande del sistema solar.",
+    structure: [
+      { name: "Núcleo de hierro y azufre", to: 0.53, color: 0xd8935c },
+      { name: "Manto rocoso", to: 0.98, color: 0xa14a26 },
+      { name: "Corteza", to: 1.0, color: 0xc1440e },
+    ],
+  },
+  {
+    key: "5", name: "Júpiter", color: 0xd9b98a, distanceAU: 5.2, periodDays: 4331, radiusKm: 69911, rotationHours: 9.9, tilt: 0.05,
+    moons: 95,
+    fact: "El planeta más grande del sistema solar. Su Gran Mancha Roja es una tormenta anticiclónica mayor que la Tierra.",
+    structure: [
+      { name: "Núcleo rocoso/metálico", to: 0.15, color: 0x7a5c3e },
+      { name: "Hidrógeno metálico", to: 0.8, color: 0xcf9f6e },
+      { name: "Hidrógeno/helio líquido", to: 0.97, color: 0xe0c49a },
+      { name: "Atmósfera", to: 1.0, color: 0xd9b98a },
+    ],
+  },
+  {
+    key: "6", name: "Saturno", color: 0xe3c17f, distanceAU: 9.58, periodDays: 10747, radiusKm: 58232, rotationHours: 10.7, tilt: 0.47, rings: true,
+    moons: 146,
+    fact: "Famoso por su espectacular sistema de anillos, compuestos principalmente de hielo y roca.",
+    structure: [
+      { name: "Núcleo rocoso/metálico", to: 0.15, color: 0x7a6248 },
+      { name: "Hidrógeno metálico", to: 0.6, color: 0xcaa76d },
+      { name: "Hidrógeno/helio líquido", to: 0.97, color: 0xdfc38f },
+      { name: "Atmósfera", to: 1.0, color: 0xe3c17f },
+    ],
+  },
+  {
+    key: "7", name: "Urano", color: 0x9fd6e0, distanceAU: 19.2, periodDays: 30589, radiusKm: 25362, rotationHours: -17.2, tilt: 1.71,
+    moons: 27,
+    fact: "Gira prácticamente 'tumbado de lado', con un eje de rotación casi paralelo a su órbita.",
+    structure: [
+      { name: "Núcleo rocoso", to: 0.2, color: 0x5c4a3e },
+      { name: "Manto helado", to: 0.8, color: 0x4fa3ad },
+      { name: "Atmósfera", to: 1.0, color: 0x9fd6e0 },
+    ],
+  },
+  {
+    key: "8", name: "Neptuno", color: 0x4166f5, distanceAU: 30.05, periodDays: 59800, radiusKm: 24622, rotationHours: 16.1, tilt: 0.49,
+    moons: 14,
+    fact: "El planeta más lejano y ventoso: sus vientos pueden superar los 2000 km/h.",
+    structure: [
+      { name: "Núcleo rocoso", to: 0.2, color: 0x4a3c52 },
+      { name: "Manto helado", to: 0.8, color: 0x2f4fb0 },
+      { name: "Atmósfera", to: 1.0, color: 0x4166f5 },
+    ],
+  },
 ];
+
+const SUN_INFO = {
+  name: "Sol",
+  color: 0xffcc55,
+  radiusKm: 696000,
+  fact: "Una estrella enana amarilla que concentra el 99.8% de la masa del sistema solar. Su luz tarda unos 8 minutos en llegar a la Tierra.",
+  structure: [
+    { name: "Núcleo", to: 0.25, color: 0xfff6d0 },
+    { name: "Zona radiativa", to: 0.7, color: 0xffd35c },
+    { name: "Zona convectiva", to: 0.98, color: 0xff9d1f },
+    { name: "Fotosfera", to: 1.0, color: 0xffcc55 },
+  ],
+};
 
 function scaleDistance(au) {
   return Math.sqrt(au) * AU + 6;
@@ -54,6 +142,7 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  resizeStructureView();
 });
 
 /* -------------------------------------------------------------------- */
@@ -431,28 +520,178 @@ function normalizeName(str) {
   planetOptionsList.appendChild(option);
 });
 
-function searchPlanet(query) {
-  const q = normalizeName(query);
-  if (!q) return false;
+/* -------------------------------------------------------------------- */
+/*  Panel de información detallada del planeta buscado                  */
+/* -------------------------------------------------------------------- */
+const planetPanel = document.getElementById("planet-panel");
+const planetPanelClose = document.getElementById("planet-panel-close");
+const planetPanelSwatch = document.getElementById("planet-panel-swatch");
+const planetPanelName = document.getElementById("planet-panel-name");
+const planetPanelStats = document.getElementById("planet-panel-stats");
+const planetPanelFact = document.getElementById("planet-panel-fact");
+const planetPanelCenter = document.getElementById("planet-panel-center");
 
-  if (normalizeName("Sol").startsWith(q)) {
-    flyTo(sun, sunRadius * 8);
-    return true;
+let panelFocusTarget = null; // { object3d, offset }
+
+/* Visor 3D de la estructura interna (mini escena Three.js aparte) */
+const structureViewEl = document.getElementById("planet-structure-view");
+const structureLegendEl = document.getElementById("planet-structure-legend");
+
+const structureScene = new THREE.Scene();
+const structureCamera = new THREE.PerspectiveCamera(40, 1, 0.1, 10);
+structureCamera.position.set(0, 0.4, 3.2);
+structureCamera.lookAt(0, 0, 0);
+
+const structureRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+structureRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+structureViewEl.appendChild(structureRenderer.domElement);
+
+structureScene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const structureLight = new THREE.DirectionalLight(0xffffff, 1.1);
+structureLight.position.set(2, 2, 3);
+structureScene.add(structureLight);
+
+let structureGroup = null;
+
+function disposeStructureGroup() {
+  if (!structureGroup) return;
+  structureGroup.traverse((child) => {
+    if (child.geometry) child.geometry.dispose();
+    if (child.material) child.material.dispose();
+  });
+  structureScene.remove(structureGroup);
+  structureGroup = null;
+}
+
+function buildStructureView(layers) {
+  disposeStructureGroup();
+  structureGroup = new THREE.Group();
+  // capas de mayor a menor radio: el z-buffer resuelve la oclusión correctamente
+  [...layers]
+    .sort((a, b) => b.to - a.to)
+    .forEach((layer) => {
+      const geometry = new THREE.SphereGeometry(layer.to, 40, 24, 0, Math.PI);
+      const material = new THREE.MeshStandardMaterial({
+        color: layer.color,
+        side: THREE.DoubleSide,
+        roughness: 0.7,
+        metalness: 0.05,
+      });
+      structureGroup.add(new THREE.Mesh(geometry, material));
+    });
+  structureGroup.scale.setScalar(1.15);
+  structureGroup.rotation.y = -Math.PI / 2.4;
+  structureScene.add(structureGroup);
+
+  structureLegendEl.innerHTML = "";
+  layers.forEach((layer) => {
+    const li = document.createElement("li");
+    const dot = document.createElement("span");
+    dot.className = "legend-dot";
+    dot.style.background = `#${layer.color.toString(16).padStart(6, "0")}`;
+    li.append(dot, document.createTextNode(layer.name));
+    structureLegendEl.appendChild(li);
+  });
+}
+
+function resizeStructureView() {
+  const w = structureViewEl.clientWidth || 260;
+  const h = structureViewEl.clientHeight || 180;
+  structureCamera.aspect = w / h;
+  structureCamera.updateProjectionMatrix();
+  structureRenderer.setSize(w, h);
+}
+resizeStructureView();
+
+function renderStructureView(dt) {
+  if (planetPanel.classList.contains("hidden") || !structureGroup) return;
+  structureGroup.rotation.y += dt * 0.35;
+  structureRenderer.render(structureScene, structureCamera);
+}
+
+function renderPlanetPanel({ name, color, stats, fact, structure, focusObject, focusOffset }) {
+  planetPanelName.textContent = name;
+  planetPanelSwatch.style.background = `#${color.toString(16).padStart(6, "0")}`;
+  planetPanelSwatch.style.color = `#${color.toString(16).padStart(6, "0")}`;
+  planetPanelStats.innerHTML = "";
+  for (const [label, value] of stats) {
+    const dt = document.createElement("dt");
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = value;
+    planetPanelStats.append(dt, dd);
   }
+  planetPanelFact.textContent = fact;
+  buildStructureView(structure);
+  panelFocusTarget = { object3d: focusObject, offset: focusOffset };
+  planetPanel.classList.remove("hidden");
+}
+
+function formatRotation(rotationHours) {
+  const abs = Math.abs(rotationHours);
+  const retro = rotationHours < 0 ? " (retrógrada)" : "";
+  if (abs > 48) return `${(abs / 24).toFixed(1)} días terrestres${retro}`;
+  return `${abs.toFixed(1)} horas${retro}`;
+}
+
+function showPlanetInfoPanel(body) {
+  const data = PLANETS.find((p) => p.key === body.key);
+  renderPlanetPanel({
+    name: data.name,
+    color: data.colorOverride ?? data.color,
+    stats: [
+      ["Distancia al Sol", `${data.distanceAU} UA (${Math.round(data.distanceAU * 149597870).toLocaleString("es-ES")} km)`],
+      ["Radio", `${data.radiusKm.toLocaleString("es-ES")} km (${(data.radiusKm / 6371).toFixed(2)}× la Tierra)`],
+      ["Periodo orbital", `${data.periodDays.toLocaleString("es-ES")} días (${formatOrbitYears(data.periodDays)})`],
+      ["Rotación", formatRotation(data.rotationHours)],
+      ["Inclinación axial", `${((data.tilt * 180) / Math.PI).toFixed(1)}°`],
+      ["Lunas conocidas", `${data.moons}`],
+    ],
+    fact: data.fact,
+    structure: data.structure,
+    focusObject: body.mesh,
+    focusOffset: body.radius * 10 + 4,
+  });
+}
+
+function showSunInfoPanel() {
+  renderPlanetPanel({
+    name: SUN_INFO.name,
+    color: SUN_INFO.color,
+    stats: [
+      ["Radio", `${SUN_INFO.radiusKm.toLocaleString("es-ES")} km (109× la Tierra)`],
+      ["Masa", "≈333 000× la masa terrestre"],
+      ["Temperatura superficial", "≈5 500 °C"],
+      ["Distancia media a la Tierra", "149.6 millones de km (1 UA)"],
+    ],
+    fact: SUN_INFO.fact,
+    structure: SUN_INFO.structure,
+    focusObject: sun,
+    focusOffset: sunRadius * 8,
+  });
+}
+
+planetPanelClose.addEventListener("click", () => planetPanel.classList.add("hidden"));
+planetPanelCenter.addEventListener("click", () => {
+  if (panelFocusTarget) flyTo(panelFocusTarget.object3d, panelFocusTarget.offset);
+});
+
+function findBodyMatch(query) {
+  const q = normalizeName(query);
+  if (!q) return null;
+  if (normalizeName("Sol").startsWith(q)) return { type: "sun" };
   const body =
     bodies.find((b) => normalizeName(b.name).startsWith(q)) ||
     bodies.find((b) => normalizeName(b.name).includes(q));
-  if (body) {
-    flyTo(body.mesh, body.radius * 10 + 4);
-    return true;
-  }
-  return false;
+  return body ? { type: "planet", body } : null;
 }
 
 function handleSearchSubmit() {
-  const found = searchPlanet(planetSearchInput.value);
-  planetSearchInput.classList.toggle("search-error", !found);
-  if (found) {
+  const match = findBodyMatch(planetSearchInput.value);
+  planetSearchInput.classList.toggle("search-error", !match);
+  if (match) {
+    if (match.type === "sun") showSunInfoPanel();
+    else showPlanetInfoPanel(match.body);
     planetSearchInput.value = "";
     planetSearchInput.blur();
   }
@@ -626,6 +865,7 @@ function animate() {
   updateMovement(dt);
   updateLabels();
   updateProximityInfo();
+  renderStructureView(dt);
 
   speedValueEl.textContent = moveSpeed.toFixed(1);
 
