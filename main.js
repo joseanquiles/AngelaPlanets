@@ -837,6 +837,74 @@ PLANETS.forEach((data, index) => {
 });
 
 /* -------------------------------------------------------------------- */
+/*  Cinturón de asteroides (entre Marte y Júpiter)                      */
+/* -------------------------------------------------------------------- */
+// Zona real del cinturón (2.2-3.2 UA) recortada un poco para no invadir
+// ni las lunas de Marte (llegan hasta ~35.8) ni las de Júpiter (empiezan ~43.8)
+const ASTEROID_BELT_INNER = 39;
+const ASTEROID_BELT_OUTER = 43;
+const ASTEROID_COUNT_PER_GROUP = 150;
+
+function createAsteroidGeometry(seed) {
+  const geometry = new THREE.IcosahedronGeometry(1, 1);
+  let rnd = seed;
+  const rand = () => {
+    rnd = (rnd * 9301 + 49297) % 233280;
+    return rnd / 233280;
+  };
+  const pos = geometry.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const bump = 0.72 + rand() * 0.56;
+    pos.setXYZ(i, pos.getX(i) * bump, pos.getY(i) * bump, pos.getZ(i) * bump);
+  }
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+const asteroidBeltGroup = new THREE.Object3D();
+scene.add(asteroidBeltGroup);
+
+const ASTEROID_ROCK_COLORS = [0x8a8074, 0x6e6258, 0x9c9080];
+let asteroidSeed = 5;
+ASTEROID_ROCK_COLORS.forEach((rockColor, groupIndex) => {
+  const geometry = createAsteroidGeometry(groupIndex * 17 + 3);
+  const material = new THREE.MeshStandardMaterial({
+    map: surfaceTexture(rockColor, { spots: 70, seed: groupIndex * 23 + 7 }),
+    roughness: 0.95,
+    metalness: 0.02,
+  });
+  const instancedMesh = new THREE.InstancedMesh(geometry, material, ASTEROID_COUNT_PER_GROUP);
+
+  const dummy = new THREE.Object3D();
+  for (let i = 0; i < ASTEROID_COUNT_PER_GROUP; i++) {
+    asteroidSeed = (asteroidSeed * 9301 + 49297) % 233280;
+    const rand1 = asteroidSeed / 233280;
+    asteroidSeed = (asteroidSeed * 9301 + 49297) % 233280;
+    const rand2 = asteroidSeed / 233280;
+    asteroidSeed = (asteroidSeed * 9301 + 49297) % 233280;
+    const rand3 = asteroidSeed / 233280;
+    asteroidSeed = (asteroidSeed * 9301 + 49297) % 233280;
+    const rand4 = asteroidSeed / 233280;
+
+    const angle = rand1 * Math.PI * 2;
+    const radius = ASTEROID_BELT_INNER + rand2 * (ASTEROID_BELT_OUTER - ASTEROID_BELT_INNER);
+    const height = (rand3 - 0.5) * 1.8;
+    const scale = 0.08 + rand4 * 0.3;
+
+    dummy.position.set(Math.cos(angle) * radius, height, Math.sin(angle) * radius);
+    dummy.rotation.set(rand1 * Math.PI * 2, rand2 * Math.PI * 2, rand3 * Math.PI * 2);
+    dummy.scale.setScalar(scale);
+    dummy.updateMatrix();
+    instancedMesh.setMatrixAt(i, dummy.matrix);
+  }
+  instancedMesh.instanceMatrix.needsUpdate = true;
+  asteroidBeltGroup.add(instancedMesh);
+});
+
+// velocidad de traslación conjunta del cinturón a ~2.7 UA (periodo real ≈ 4.6 años)
+const asteroidBeltAngularSpeed = (Math.PI * 2) / (4.6 * EARTH_YEAR_SECONDS);
+
+/* -------------------------------------------------------------------- */
 /*  Registro de lunas (para etiquetas y búsqueda)                       */
 /* -------------------------------------------------------------------- */
 const moonRegistry = bodies.flatMap((b) => b.moons);
@@ -1411,6 +1479,7 @@ function animate() {
     }
   }
   sun.rotation.y += dt * 0.02;
+  asteroidBeltGroup.rotation.y = asteroidBeltAngularSpeed * simTime;
 
   updateMovement(dt);
   updateComets(cometTime);
