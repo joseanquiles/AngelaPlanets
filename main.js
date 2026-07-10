@@ -38,7 +38,7 @@ const PLANETS = [
       { name: "Núcleo interno (sólido)", to: 0.19, color: 0xfff0c2 },
       { name: "Núcleo externo (líquido)", to: 0.55, color: 0xffb066 },
       { name: "Manto", to: 0.97, color: 0xb0523a },
-      { name: "Corteza", to: 1.0, color: 0x3a7bd5 },
+      { name: "Corteza (continentes y océanos)", to: 1.0, color: 0x3a7bd5, continents: 0x2e7d32 },
     ],
   },
   {
@@ -198,7 +198,7 @@ function makeCanvas(size = 256) {
 }
 
 function surfaceTexture(baseColor, options = {}) {
-  const { bands = false, spots = 60, seed = 1 } = options;
+  const { bands = false, spots = 60, seed = 1, continents = null } = options;
   const size = 256;
   const canvas = makeCanvas(size);
   const ctx = canvas.getContext("2d");
@@ -212,6 +212,25 @@ function surfaceTexture(baseColor, options = {}) {
     rnd = (rnd * 9301 + 49297) % 233280;
     return rnd / 233280;
   };
+
+  if (continents) {
+    const land = new THREE.Color(continents);
+    const clusters = 8;
+    for (let c = 0; c < clusters; c++) {
+      const cx = rand() * size;
+      const cy = rand() * size;
+      const blobCount = 8 + Math.floor(rand() * 8);
+      for (let b = 0; b < blobCount; b++) {
+        const x = cx + (rand() - 0.5) * 80;
+        const y = cy + (rand() - 0.5) * 80;
+        const r = rand() * 20 + 9;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${land.r * 255},${land.g * 255},${land.b * 255},${0.6 + rand() * 0.3})`;
+        ctx.fill();
+      }
+    }
+  }
 
   if (bands) {
     for (let y = 0; y < size; y++) {
@@ -355,7 +374,12 @@ PLANETS.forEach((data, index) => {
 
   const isGasGiant = data.radiusKm > 20000;
   const material = new THREE.MeshStandardMaterial({
-    map: surfaceTexture(color, { bands: isGasGiant, spots: 50, seed: index * 13 + 3 }),
+    map: surfaceTexture(color, {
+      bands: isGasGiant,
+      spots: 50,
+      seed: index * 13 + 3,
+      continents: data.name === "Tierra" ? 0x2e7d32 : null,
+    }),
     roughness: 0.85,
     metalness: 0.05,
   });
@@ -557,7 +581,10 @@ function disposeStructureGroup() {
   if (!structureGroup) return;
   structureGroup.traverse((child) => {
     if (child.geometry) child.geometry.dispose();
-    if (child.material) child.material.dispose();
+    if (child.material) {
+      if (child.material.map) child.material.map.dispose();
+      child.material.dispose();
+    }
   });
   structureScene.remove(structureGroup);
   structureGroup = null;
@@ -571,12 +598,17 @@ function buildStructureView(layers) {
     .sort((a, b) => b.to - a.to)
     .forEach((layer) => {
       const geometry = new THREE.SphereGeometry(layer.to, 40, 24, 0, Math.PI);
-      const material = new THREE.MeshStandardMaterial({
-        color: layer.color,
+      const materialOptions = {
         side: THREE.DoubleSide,
         roughness: 0.7,
         metalness: 0.05,
-      });
+      };
+      if (layer.continents) {
+        materialOptions.map = surfaceTexture(layer.color, { continents: layer.continents, spots: 0 });
+      } else {
+        materialOptions.color = layer.color;
+      }
+      const material = new THREE.MeshStandardMaterial(materialOptions);
       structureGroup.add(new THREE.Mesh(geometry, material));
     });
   structureGroup.scale.setScalar(1.15);
@@ -588,7 +620,10 @@ function buildStructureView(layers) {
     const li = document.createElement("li");
     const dot = document.createElement("span");
     dot.className = "legend-dot";
-    dot.style.background = `#${layer.color.toString(16).padStart(6, "0")}`;
+    const baseHex = `#${layer.color.toString(16).padStart(6, "0")}`;
+    dot.style.background = layer.continents
+      ? `linear-gradient(135deg, ${baseHex} 50%, #${layer.continents.toString(16).padStart(6, "0")} 50%)`
+      : baseHex;
     li.append(dot, document.createTextNode(layer.name));
     structureLegendEl.appendChild(li);
   });
