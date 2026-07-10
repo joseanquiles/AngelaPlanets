@@ -33,7 +33,13 @@ const PLANETS = [
   },
   {
     key: "3", name: "Tierra", color: 0x3a7bd5, distanceAU: 1.0, periodDays: 365.25, radiusKm: 6371, rotationHours: 24, tilt: 0.41,
-    notableMoons: [{ name: "Luna", sizeFactor: 0.27, orbitFactor: 2.0, periodDays: 27.3 }],
+    notableMoons: [
+      {
+        name: "Luna", sizeFactor: 0.27, orbitFactor: 2.0, periodDays: 27.3,
+        radiusKm: 1737, distanceKm: 384400,
+        fact: "El quinto satélite más grande del sistema solar. Estabiliza el eje de rotación de la Tierra y provoca las mareas.",
+      },
+    ],
     gravity: 1.0, orbitalSpeedKms: 29.8, avgTempC: 15, meanLongitudeJ2000: 100.46,
     fact: "El único planeta conocido con vida. El 71% de su superficie está cubierta de agua líquida.",
     structure: [
@@ -46,8 +52,16 @@ const PLANETS = [
   {
     key: "4", name: "Marte", color: 0xc1440e, distanceAU: 1.52, periodDays: 687, radiusKm: 3390, rotationHours: 24.6, tilt: 0.44,
     notableMoons: [
-      { name: "Fobos", sizeFactor: 0.14, orbitFactor: 1.8, periodDays: 0.32 },
-      { name: "Deimos", sizeFactor: 0.1, orbitFactor: 2.6, periodDays: 1.26 },
+      {
+        name: "Fobos", sizeFactor: 0.14, orbitFactor: 1.8, periodDays: 0.32,
+        radiusKm: 11, distanceKm: 9376,
+        fact: "Orbita tan cerca de Marte que da una vuelta completa en menos de 8 horas, más rápido de lo que gira el propio planeta.",
+      },
+      {
+        name: "Deimos", sizeFactor: 0.1, orbitFactor: 2.6, periodDays: 1.26,
+        radiusKm: 6, distanceKm: 23463,
+        fact: "El más pequeño y lejano de los dos satélites marcianos, con una superficie antigua y muy craterizada.",
+      },
     ],
     gravity: 0.38, orbitalSpeedKms: 24.1, avgTempC: -65, meanLongitudeJ2000: 355.45,
     fact: "Conocido como el planeta rojo por el óxido de hierro de su superficie. Alberga el Monte Olimpo, el volcán más grande del sistema solar.",
@@ -60,10 +74,26 @@ const PLANETS = [
   {
     key: "5", name: "Júpiter", color: 0xd9b98a, distanceAU: 5.2, periodDays: 4331, radiusKm: 69911, rotationHours: 9.9, tilt: 0.05,
     notableMoons: [
-      { name: "Ío", sizeFactor: 0.16, orbitFactor: 3.0, periodDays: 1.77 },
-      { name: "Europa", sizeFactor: 0.14, orbitFactor: 3.8, periodDays: 3.55 },
-      { name: "Ganímedes", sizeFactor: 0.22, orbitFactor: 4.8, periodDays: 7.15 },
-      { name: "Calisto", sizeFactor: 0.2, orbitFactor: 5.6, periodDays: 16.69 },
+      {
+        name: "Ío", sizeFactor: 0.16, orbitFactor: 3.0, periodDays: 1.77,
+        radiusKm: 1821, distanceKm: 421700,
+        fact: "La luna con mayor actividad volcánica del sistema solar, debido a las fuerzas de marea que ejerce Júpiter.",
+      },
+      {
+        name: "Europa", sizeFactor: 0.14, orbitFactor: 3.8, periodDays: 3.55,
+        radiusKm: 1560, distanceKm: 671034,
+        fact: "Bajo su corteza helada esconde un océano de agua líquida, uno de los lugares más prometedores para buscar vida.",
+      },
+      {
+        name: "Ganímedes", sizeFactor: 0.22, orbitFactor: 4.8, periodDays: 7.15,
+        radiusKm: 2634, distanceKm: 1070412,
+        fact: "El satélite más grande del sistema solar, mayor incluso que el planeta Mercurio.",
+      },
+      {
+        name: "Calisto", sizeFactor: 0.2, orbitFactor: 5.6, periodDays: 16.69,
+        radiusKm: 2410, distanceKm: 1882709,
+        fact: "Una de las superficies más antiguas y craterizadas del sistema solar, apenas alterada desde su formación.",
+      },
     ],
     gravity: 2.53, orbitalSpeedKms: 13.1, avgTempC: -110, meanLongitudeJ2000: 34.4,
     fact: "El planeta más grande del sistema solar. Su Gran Mancha Roja es una tormenta anticiclónica mayor que la Tierra.",
@@ -77,11 +107,31 @@ const PLANETS = [
   {
     key: "6", name: "Saturno", color: 0xe3c17f, distanceAU: 9.58, periodDays: 10747, radiusKm: 58232, rotationHours: 10.7, tilt: 0.47, rings: true,
     notableMoons: [
-      { name: "Mimas", sizeFactor: 0.09, orbitFactor: 3.3, periodDays: 0.94 },
-      { name: "Encélado", sizeFactor: 0.1, orbitFactor: 3.7, periodDays: 1.37 },
-      { name: "Rea", sizeFactor: 0.15, orbitFactor: 4.3, periodDays: 4.5 },
-      { name: "Titán", sizeFactor: 0.24, orbitFactor: 5.0, periodDays: 15.95 },
-      { name: "Jápeto", sizeFactor: 0.13, orbitFactor: 6.0, periodDays: 79.3 },
+      {
+        name: "Mimas", sizeFactor: 0.09, orbitFactor: 3.3, periodDays: 0.94,
+        radiusKm: 198, distanceKm: 185540,
+        fact: "Su enorme cráter Herschel le da un llamativo parecido a la Estrella de la Muerte.",
+      },
+      {
+        name: "Encélado", sizeFactor: 0.1, orbitFactor: 3.7, periodDays: 1.37,
+        radiusKm: 252, distanceKm: 238020,
+        fact: "Expulsa géiseres de agua helada desde su polo sur, señal de un océano subterráneo bajo el hielo.",
+      },
+      {
+        name: "Rea", sizeFactor: 0.15, orbitFactor: 4.3, periodDays: 4.5,
+        radiusKm: 764, distanceKm: 527108,
+        fact: "El segundo satélite más grande de Saturno, formado casi en su totalidad por hielo de agua.",
+      },
+      {
+        name: "Titán", sizeFactor: 0.24, orbitFactor: 5.0, periodDays: 15.95,
+        radiusKm: 2575, distanceKm: 1221870,
+        fact: "El único satélite del sistema solar con una atmósfera densa y lagos estables de metano líquido en su superficie.",
+      },
+      {
+        name: "Jápeto", sizeFactor: 0.13, orbitFactor: 6.0, periodDays: 79.3,
+        radiusKm: 735, distanceKm: 3560820,
+        fact: "Tiene dos caras de color radicalmente distinto: una oscura como el carbón y otra brillante como el hielo.",
+      },
     ],
     gravity: 1.06, orbitalSpeedKms: 9.7, avgTempC: -140, meanLongitudeJ2000: 49.95,
     fact: "Famoso por su espectacular sistema de anillos, compuestos principalmente de hielo y roca.",
@@ -95,11 +145,31 @@ const PLANETS = [
   {
     key: "7", name: "Urano", color: 0x9fd6e0, distanceAU: 19.2, periodDays: 30589, radiusKm: 25362, rotationHours: -17.2, tilt: 1.71,
     notableMoons: [
-      { name: "Miranda", sizeFactor: 0.1, orbitFactor: 3.0, periodDays: 1.41 },
-      { name: "Ariel", sizeFactor: 0.15, orbitFactor: 3.8, periodDays: 2.52 },
-      { name: "Umbriel", sizeFactor: 0.15, orbitFactor: 4.6, periodDays: 4.14 },
-      { name: "Titania", sizeFactor: 0.2, orbitFactor: 5.6, periodDays: 8.71 },
-      { name: "Oberón", sizeFactor: 0.19, orbitFactor: 6.6, periodDays: 13.46 },
+      {
+        name: "Miranda", sizeFactor: 0.1, orbitFactor: 3.0, periodDays: 1.41,
+        radiusKm: 236, distanceKm: 129900,
+        fact: "Presenta algunos de los acantilados más altos del sistema solar, de hasta 20 km.",
+      },
+      {
+        name: "Ariel", sizeFactor: 0.15, orbitFactor: 3.8, periodDays: 2.52,
+        radiusKm: 579, distanceKm: 190900,
+        fact: "La luna más brillante de Urano, con una superficie relativamente joven marcada por fallas y cañones.",
+      },
+      {
+        name: "Umbriel", sizeFactor: 0.15, orbitFactor: 4.6, periodDays: 4.14,
+        radiusKm: 585, distanceKm: 266000,
+        fact: "La más oscura de las grandes lunas de Urano, con una superficie muy antigua y craterizada.",
+      },
+      {
+        name: "Titania", sizeFactor: 0.2, orbitFactor: 5.6, periodDays: 8.71,
+        radiusKm: 789, distanceKm: 436300,
+        fact: "El satélite más grande de Urano, con enormes cañones que sugieren actividad geológica pasada.",
+      },
+      {
+        name: "Oberón", sizeFactor: 0.19, orbitFactor: 6.6, periodDays: 13.46,
+        radiusKm: 761, distanceKm: 583500,
+        fact: "El más externo de los grandes satélites de Urano, con una superficie muy craterizada.",
+      },
     ],
     gravity: 0.89, orbitalSpeedKms: 6.8, avgTempC: -195, meanLongitudeJ2000: 313.24,
     fact: "Gira prácticamente 'tumbado de lado', con un eje de rotación casi paralelo a su órbita.",
@@ -111,7 +181,13 @@ const PLANETS = [
   },
   {
     key: "8", name: "Neptuno", color: 0x4166f5, distanceAU: 30.05, periodDays: 59800, radiusKm: 24622, rotationHours: 16.1, tilt: 0.49,
-    notableMoons: [{ name: "Tritón", sizeFactor: 0.24, orbitFactor: 3.5, periodDays: 5.88, retrograde: true }],
+    notableMoons: [
+      {
+        name: "Tritón", sizeFactor: 0.24, orbitFactor: 3.5, periodDays: 5.88, retrograde: true,
+        radiusKm: 1353, distanceKm: 354759,
+        fact: "Orbita Neptuno en sentido retrógrado y probablemente sea un objeto capturado del cinturón de Kuiper. Expulsa géiseres de nitrógeno.",
+      },
+    ],
     gravity: 1.14, orbitalSpeedKms: 5.4, avgTempC: -200, meanLongitudeJ2000: 304.88,
     fact: "El planeta más lejano y ventoso: sus vientos pueden superar los 2000 km/h.",
     structure: [
@@ -467,7 +543,18 @@ PLANETS.forEach((data, index) => {
     moonPivot.add(moonMesh);
     const moonPeriodSimSeconds = (moonData.periodDays / 365.25) * EARTH_YEAR_SECONDS * MOON_SLOWDOWN;
     const moonAngularSpeed = ((Math.PI * 2) / moonPeriodSimSeconds) * (moonData.retrograde ? -1 : 1);
-    return { name: moonData.name, pivot: moonPivot, mesh: moonMesh, angularSpeed: moonAngularSpeed };
+    return {
+      name: moonData.name,
+      pivot: moonPivot,
+      mesh: moonMesh,
+      angularSpeed: moonAngularSpeed,
+      planetName: data.name,
+      periodDays: moonData.periodDays,
+      retrograde: !!moonData.retrograde,
+      radiusKm: moonData.radiusKm,
+      distanceKm: moonData.distanceKm,
+      fact: moonData.fact,
+    };
   });
 
   const periodSimSeconds = (data.periodDays / 365.25) * EARTH_YEAR_SECONDS;
@@ -488,13 +575,17 @@ PLANETS.forEach((data, index) => {
 });
 
 /* -------------------------------------------------------------------- */
+/*  Registro de lunas (para etiquetas y búsqueda)                       */
+/* -------------------------------------------------------------------- */
+const moonRegistry = bodies.flatMap((b) => b.moons);
+
+/* -------------------------------------------------------------------- */
 /*  Etiquetas HTML flotantes                                            */
 /* -------------------------------------------------------------------- */
-const moonMeshes = bodies.flatMap((b) => b.moons.map((m) => m.mesh));
 const labelObjects = [
   { obj: sun, className: "planet-label" },
   ...bodies.map((b) => ({ obj: b.mesh, className: "planet-label" })),
-  ...moonMeshes.map((mesh) => ({ obj: mesh, className: "planet-label moon-label" })),
+  ...moonRegistry.map((m) => ({ obj: m.mesh, className: "planet-label moon-label" })),
 ].map(({ obj, className }) => {
   const el = document.createElement("div");
   el.className = className;
@@ -579,7 +670,7 @@ function normalizeName(str) {
     .trim();
 }
 
-[{ name: "Sol" }, ...PLANETS].forEach((data) => {
+[{ name: "Sol" }, ...PLANETS, ...moonRegistry].forEach((data) => {
   const option = document.createElement("option");
   option.value = data.name;
   planetOptionsList.appendChild(option);
@@ -772,6 +863,24 @@ function showSunInfoPanel() {
   });
 }
 
+function showMoonInfoPanel(moon) {
+  const moonRadius = moon.mesh.geometry.parameters.radius;
+  renderPlanetPanel({
+    name: moon.name,
+    color: 0xb9b9b9,
+    stats: [
+      ["Satélite de", moon.planetName],
+      ["Radio", `${moon.radiusKm.toLocaleString("es-ES")} km`],
+      ["Distancia al planeta", `${moon.distanceKm.toLocaleString("es-ES")} km`],
+      ["Periodo orbital", `${moon.periodDays} días${moon.retrograde ? " (retrógrada)" : ""}`],
+    ],
+    fact: moon.fact,
+    structure: [{ name: "Composición", to: 1.0, color: 0xb9b9b9 }],
+    focusObject: moon.mesh,
+    focusOffset: moonRadius * 8 + 1.5,
+  });
+}
+
 planetPanelClose.addEventListener("click", () => planetPanel.classList.add("hidden"));
 planetPanelCenter.addEventListener("click", () => {
   if (panelFocusTarget) flyTo(panelFocusTarget.object3d, panelFocusTarget.offset);
@@ -784,7 +893,11 @@ function findBodyMatch(query) {
   const body =
     bodies.find((b) => normalizeName(b.name).startsWith(q)) ||
     bodies.find((b) => normalizeName(b.name).includes(q));
-  return body ? { type: "planet", body } : null;
+  if (body) return { type: "planet", body };
+  const moon =
+    moonRegistry.find((m) => normalizeName(m.name).startsWith(q)) ||
+    moonRegistry.find((m) => normalizeName(m.name).includes(q));
+  return moon ? { type: "moon", moon } : null;
 }
 
 function handleSearchSubmit() {
@@ -792,7 +905,8 @@ function handleSearchSubmit() {
   planetSearchInput.classList.toggle("search-error", !match);
   if (match) {
     if (match.type === "sun") showSunInfoPanel();
-    else showPlanetInfoPanel(match.body);
+    else if (match.type === "planet") showPlanetInfoPanel(match.body);
+    else showMoonInfoPanel(match.moon);
     planetSearchInput.value = "";
     planetSearchInput.blur();
   }
