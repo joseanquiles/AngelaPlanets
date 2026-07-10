@@ -669,6 +669,10 @@ function formatRotation(rotationHours) {
   return `${abs.toFixed(1)} horas${retro}`;
 }
 
+function formatHoursValue(hours) {
+  return hours.toLocaleString("es-ES", { maximumFractionDigits: 1 });
+}
+
 const J2000_UTC_MS = Date.UTC(2000, 0, 1, 12, 0, 0);
 
 // Posición orbital aproximada: usa la longitud media real en J2000 y una
@@ -695,6 +699,9 @@ function showPlanetInfoPanel(body) {
       ["Periodo orbital", `${data.periodDays.toLocaleString("es-ES")} días (${formatOrbitYears(data.periodDays)})`],
       ["Velocidad orbital media", `${data.orbitalSpeedKms} km/s`],
       ["Rotación", formatRotation(data.rotationHours)],
+      ["Duración del día", `${formatHoursValue(Math.abs(data.rotationHours))} horas`],
+      ["Horas de luz", `${formatHoursValue(Math.abs(data.rotationHours) / 2)} horas`],
+      ["Horas de noche", `${formatHoursValue(Math.abs(data.rotationHours) / 2)} horas`],
       ["Inclinación axial", `${((data.tilt * 180) / Math.PI).toFixed(1)}°`],
       ["Gravedad superficial", `${data.gravity}× la Tierra`],
       ["Temperatura media", `${data.avgTempC > 0 ? "+" : ""}${data.avgTempC} °C`],
