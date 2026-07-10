@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Solar 3D</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app"></div>
+
+  <div id="hud">
+    <div id="crosshair"></div>
+    <div id="info-panel">
+      <div id="target-name">Sistema Solar</div>
+      <div id="target-detail"></div>
+    </div>
+    <div id="speed-indicator">Velocidad: <span id="speed-value">0</span></div>
+    <button id="reset-view" title="Vista inicial">⌂</button>
+    <button id="help-toggle" title="Ayuda">?</button>
+    <div id="help-panel" class="hidden">
+      <h2>Controles</h2>
+      <ul>
+        <li><b>Click</b> en la escena &mdash; activar control de ratón (vista libre)</li>
+        <li><b>W A S D</b> &mdash; mover adelante / izquierda / atrás / derecha</li>
+        <li><b>Espacio / Shift</b> &mdash; subir / bajar</li>
+        <li><b>Rueda del ratón</b> &mdash; aumentar / disminuir velocidad</li>
+        <li><b>Q / E</b> &mdash; disminuir / aumentar velocidad</li>
+        <li><b>1&ndash;8</b> &mdash; viajar al planeta correspondiente</li>
+        <li><b>9</b> &mdash; vista general del sistema</li>
+        <li><b>0</b> &mdash; ir al Sol</li>
+        <li><b>P</b> &mdash; pausar / reanudar órbitas</li>
+        <li><b>+ / -</b> &mdash; acelerar / ralentizar el tiempo</li>
+        <li><b>Casa</b> &mdash; volver a la vista inicial</li>
+        <li><b>Esc</b> &mdash; liberar el ratón</li>
+      </ul>
+    </div>
+    <div id="loading">Cargando sistema solar…</div>
+    <div id="click-hint">Haz click para explorar el espacio</div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
