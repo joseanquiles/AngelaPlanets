@@ -196,6 +196,23 @@ const PLANETS = [
       { name: "Atmósfera", to: 1.0, color: 0x4166f5 },
     ],
   },
+  {
+    key: "P", name: "Plutón", color: 0xd8c3a0, distanceAU: 39.48, periodDays: 90560, radiusKm: 1188, rotationHours: -153.3, tilt: 2.14,
+    notableMoons: [
+      {
+        name: "Caronte", sizeFactor: 0.45, orbitFactor: 2.6, periodDays: 6.39,
+        radiusKm: 606, distanceKm: 19591,
+        fact: "Es tan grande frente a Plutón (más de la mitad de su diámetro) que ambos giran anclados por marea alrededor de un centro de masas común situado fuera de la superficie de Plutón: forman un sistema binario.",
+      },
+    ],
+    gravity: 0.063, orbitalSpeedKms: 4.7, avgTempC: -225, meanLongitudeJ2000: 238.93,
+    fact: "Fue considerado el noveno planeta hasta 2006, cuando la Unión Astronómica Internacional lo reclasificó como planeta enano. Su órbita es tan excéntrica que a veces se acerca más al Sol que Neptuno.",
+    structure: [
+      { name: "Núcleo rocoso", to: 0.65, color: 0x6b5844 },
+      { name: "Manto de hielo de agua", to: 0.93, color: 0xb9cdd9 },
+      { name: "Corteza helada (nitrógeno y metano)", to: 1.0, color: 0xd8c3a0 },
+    ],
+  },
 ];
 
 const SUN_INFO = {
